@@ -1,0 +1,12 @@
+    1  sudo sh -c "echo 'LC_ALL=en_US.UTF-8\nLANG=en_US.UTF-8' >> /etc/environment"
+    2  sudo apt-get update
+    3  wget -qO- https://get.docker.com/ | sh
+    4  sudo gpasswd -a ${USER} docker
+    5  exit
+    6  docker info
+    7  mkdir example
+    8  cd example
+    9  git clone https://github.com/arellano-gustavo/vuejs-frontend.git
+   10  docker run -it -p 7777:8080 -v /home/ubuntu/example/vuejs-frontend:/sample/src kebblar/vuejs bash
+
+
