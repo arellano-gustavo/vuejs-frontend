@@ -33,11 +33,19 @@
                                   <div class="col-sm-12">
                                     <div class="form-group">
                                       <label for="edad">Precio</label>
-                                      <input type="text" class="form-control" value="" v-model="precioCompra" />
+                                      <vue-numeric 
+                                        separator="," 
+                                        v-model="precioCompra" 
+                                        v-bind:precision="2"
+                                        class="form-control" />                                      
                                     </div>
                                     <div class="form-group">
                                       <label for="valor">Cantidad</label>
-                                      <input type="text" class="form-control" value="" v-model="cantidadCompra" />
+                                      <vue-numeric 
+                                        separator="," 
+                                        v-model="cantidadCompra" 
+                                        v-bind:precision="2"
+                                        class="form-control" />                                      
                                     </div>        
                                   </div>
                                   <div class="col-sm-12">
@@ -70,11 +78,19 @@
                                   <div class="col-sm-12">
                                     <div class="form-group">
                                       <label for="edad">Precio</label>
-                                      <input type="text" class="form-control" value="" v-model="precioVenta" />
+                                      <vue-numeric 
+                                        separator="," 
+                                        v-model="precioVenta" 
+                                        v-bind:precision="2"
+                                        class="form-control" />
                                     </div>
                                     <div class="form-group">
                                       <label for="valor">Cantidad</label>
-                                      <input type="text" class="form-control" value="" v-model="cantidadVenta" />
+                                      <vue-numeric 
+                                        separator="," 
+                                        v-model="cantidadVenta" 
+                                        v-bind:precision="2"
+                                        class="form-control" />
                                     </div>        
                                   </div>
                                   <div class="col-sm-12">
@@ -146,7 +162,10 @@
     </div><!-- / vueApp -->
 
 
-<!-- https://github.com/euvl/vue-js-modal -->
+<!-- 
+  https://github.com/euvl/vue-js-modal 
+  https://github.com/euvl/vue-js-modal/blob/master/demo/client_side_rendering/src/App.vue
+-->
 <modal 
     name="op-denegada" 
     :clickToClose="false" 

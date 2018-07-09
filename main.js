@@ -6,6 +6,7 @@ import router from './router'
 import store from './store/index'
 import { sync } from 'vuex-router-sync'
 import VModal from 'vue-js-modal'
+import VueNumeric from 'vue-numeric'
 
 import './../node_modules/jquery/dist/jquery.min.js';
 import './../node_modules/bootstrap/dist/css/bootstrap.min.css';
@@ -16,6 +17,8 @@ sync(store, router)
 Vue.config.productionTip = false
 
 Vue.use(VModal)
+
+Vue.use(VueNumeric)
 
 /* eslint-disable no-new */
 new Vue({
