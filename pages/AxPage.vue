@@ -27,7 +27,9 @@ import axios from 'axios';
 export default {
   data () {
     return {
-      info: null
+      info: null,
+      errored: null,
+      loading: true
     }
   },  
   filters: {

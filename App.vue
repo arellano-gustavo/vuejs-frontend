@@ -1,15 +1,18 @@
 <template>
 <div class="app">
+  
   <div class="header">
-  <header-bar></header-bar>
+    <header-bar></header-bar>
   </div>
+
   <div class="page">
     <router-view></router-view>
     <div class="help-text">
-      <p>Vue.js 2 Single Page App (SPA) Example with vuex and vue-router.</p>
-      <a href="https://github.com/skyronic/vue-spa">View Source Code</a>
+      <p>Ejecutor de transacciones para crypto-trading.</p>
+      <a href="http://kebblar.capital">Visita nuestro sitio Web</a>
     </div>
   </div>
+
 </div>
 </template>
 

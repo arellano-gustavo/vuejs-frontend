@@ -1,6 +1,6 @@
 <template>
   <div>
-  	<h1>Hello Goose</h1>
+  	<h1>Hello Goose 3</h1>
 		<button type="button" class="btn btn-primary btn-lg">Primary</button>
 		<button type="button" class="btn btn-secondary">Secondary</button>
 		<button type="button" class="btn btn-success btn-lg">Success</button>
@@ -71,29 +71,7 @@
     </div>
   </div>
 </div>
-
-
-
-<div>
-        <h1><label id="rate">0</label></h1>
-        <h1><label id="tipo">ok</label></h1>
-</div>
-
-
   </div>
 </template>
 
-
-        <script>
-            var wsocket;
-            function connect() {
-                wsocket = new WebSocket("ws://localhost:8080/WebSocket/websocketendpoint");
-                wsocket.onmessage = onMessage;
-            }
-            function onMessage(evt) {
-                var page = JSON.parse(evt.data);
-                document.getElementById("rate").innerHTML = page.a;
-                document.getElementById("tipo").innerHTML = page.b;
-            }
-            window.addEventListener("load", connect, false);
-        </script>
+        <

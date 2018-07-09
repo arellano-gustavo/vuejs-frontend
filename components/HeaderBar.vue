@@ -12,7 +12,13 @@
       </li>
       <li class="breadcrumb-item">
         <router-link to="/axios">Axios test</router-link>
-      </li>      
+      </li>     
+      <li class="breadcrumb-item">
+        <router-link to="/graph">Graph</router-link>
+      </li>   
+      <li class="breadcrumb-item">
+        <router-link to="/more">More</router-link>
+      </li> 
     </ol>
   </nav>
 </template>
