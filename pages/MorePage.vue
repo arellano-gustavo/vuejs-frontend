@@ -4,10 +4,12 @@
     <!-- https://codepen.io/tutelagesystems/pen/pjBbxQ -->
     <div id="vueApp">
         <div class="container">
+          <div class="col-sm-12">
+            <h1 style="text-align: center;">Interfaz para trading "Kebblar Capital"</h1>
+          </div>
             <div class="row">
 
               <div class="col-sm-9">
-
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="card">
@@ -25,22 +27,21 @@
                                 </div>
                           </div>
                           <div class="card-body">
-                            <h5 class="card-title">Special title treatment</h5>
-                            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                            <h5 class="card-title">Posición de tipo "Limit" para compra</h5>
+                            <p class="card-text">(revisor de límites activado)</p>
                             <div class="row">
                                   <div class="col-sm-12">
                                     <div class="form-group">
                                       <label for="edad">Precio</label>
-                                      <input type="text" class="form-control" value="" v-model="edad" />
+                                      <input type="text" class="form-control" value="" v-model="precioCompra" />
                                     </div>
                                     <div class="form-group">
                                       <label for="valor">Cantidad</label>
-                                      <input type="text" class="form-control" value="" v-model="valor" />
+                                      <input type="text" class="form-control" value="" v-model="cantidadCompra" />
                                     </div>        
                                   </div>
                                   <div class="col-sm-12">
-                                    <a href="#" class="btn btn-success" @click="checkWebsite">Comprar</a>
-                                    <span v-if="ajaxRequest">Please Wait ...</span>
+                                    <a href="#" class="btn btn-success" @click="checaCompra">Comprar</a>
                                   </div>
                             </div>
                           </div>
@@ -63,21 +64,21 @@
                                 </div>
                           </div>
                           <div class="card-body">
-                            <h5 class="card-title">Special title treatment</h5>
-                            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                            <h5 class="card-title">Posición de tipo "Limit" para venta</h5>
+                            <p class="card-text">(revisor de límites activado)</p>
                             <div class="row">
                                   <div class="col-sm-12">
                                     <div class="form-group">
                                       <label for="edad">Precio</label>
-                                      <input type="text" class="form-control" value="" v-model="edad" />
+                                      <input type="text" class="form-control" value="" v-model="precioVenta" />
                                     </div>
                                     <div class="form-group">
                                       <label for="valor">Cantidad</label>
-                                      <input type="text" class="form-control" value="" v-model="valor" />
+                                      <input type="text" class="form-control" value="" v-model="cantidadVenta" />
                                     </div>        
                                   </div>
                                   <div class="col-sm-12">
-                                    <a href="#" class="btn btn-danger" @click="checkWebsite">Vender</a>
+                                    <a href="#" class="btn btn-danger" @click="checaVenta">Vender</a>
                                     <span v-if="ajaxRequest">Please Wait ...</span>
                                   </div>
                             </div>
@@ -127,7 +128,7 @@
               <div class="col-sm-3">
                   <div class="card">
                     <div class="card-header">
-                        <label>Valor actual BTC:&nbsp;</label><b>{{ xLabel[0].a }}</b>
+                        <label>Valor actual BTC:&nbsp;</label><b>{{ current }}</b>
                     </div>
                     <div class="card-body">
                         <table class="table table-striped">
@@ -143,6 +144,34 @@
             </div><!-- / main row -->
         </div><!-- / container -->
     </div><!-- / vueApp -->
+
+
+<!-- https://github.com/euvl/vue-js-modal -->
+<modal 
+    name="op-denegada" 
+    :clickToClose="false" 
+    :reset="true"          
+    :width="480"
+    :height="260">
+    <div class="card">
+      <div class="card-header">
+        Advertencia del sistema
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">{{ tituloOpDenegada }}</h5>
+        <p class="card-text">{{ modalInfo }}</p>
+        <div style="text-align: right;">
+          <a href="#" class="btn btn-primary" @click="closeModal">Aceptar</a>
+        </div>
+      </div>
+    </div>
+</modal>
+
+
+
+
+
+
   </div>
 </template>
 
@@ -150,37 +179,44 @@
 import axios from 'axios';
 
 export default {
-	data: function () {
-    	return {
-        	wsocket: null,
-            info: "",
-            valorz: "",
-            data: "",
-            vacio: true,
-            vacio2: true,
+  	data: function () {
+      	return {
+              info: "",
+              valorz: "",
+              data: "",
+              vacio: true,
+              current: 0,
 
-            edad: "",
-            valor: 1,
+              edad: "",
+              valor: 1,
+              delta: 0.91,
+              modalInfo: "",
+              tituloOpDenegada: "",
 
-            dataLenght: 16,
-            xLabel: [],            
+              precioVenta: 0,
+              cantidadVenta: 0,
+              precioCompra: 0,
+              cantidadCompra: 0,
 
-            debug: false,
-            ajaxRequest: false,
-            postResults: []
-    	}
-	},
+              dataLenght: 10,
+              xLabel: [0,0],            
+
+              debug: false,
+              ajaxRequest: false,
+              postResults: []
+      	}
+  	},
     created() {
     },    
     methods: {
-    	onMessage: function (e) {
-        	//var vm = this;
-        	this.info = JSON.parse(e.data);
-		},
+      	onMessage: function (e) {
+          	//var vm = this;
+          	this.info = JSON.parse(e.data);
+    		},
         onMessage2: function (e) {
             var vm = this;
             var json = JSON.parse(e.data);
-            this.vacio2 = false;
+            this.current = json.a;
 
             vm.xLabel.push(json);
             if(vm.xLabel.length >= vm.dataLenght) {
@@ -196,37 +232,71 @@ export default {
             alert('You are deleting user id: ' + id)
             // axios.delete('https://your.rest.api/users/' + id)
         },
-        checkWebsite: function() {
+        closeModal: function() {
+          this.$modal.hide('op-denegada');
+        },
+        checaVenta: function() {
+          if(this.data.b<this.cantidadVenta) {
+            this.tituloOpDenegada = "Operacion inválida";
+            this.modalInfo = "Tu operación no fue aceptada debido a que sólo posees " + this.data.b + " BTC";
+            this.$modal.show('op-denegada');
+          } else {
+            if(this.precioVenta<this.current*this.delta ) {
+              this.tituloOpDenegada = "Operacion con riesgo";
+              this.modalInfo = "Tu operación no fue aceptada debido a que el valor de la operación "+this.precioVenta+" es menor a "+Math.floor(this.current*this.delta)+" USDT."
+              this.$modal.show('op-denegada');
+            } else {
+              alert("ok");
+            }
+          }
+        },
+        checaCompra: function() {          
             //var vm = this;
             // this.ajaxRequest = true;
-            console.log(this.edad);
-            axios.post('http://192.168.100.10:6060/jersey-sample/bitcoin', 
-                {
-                    edad: this.edad,
-                    valor: this.valor
-                }, 
-                {
-                    headers: {
-                        'Content-type': 'application/json'
-                    }
+            if(false) {
+              console.log(this.edad);
+              axios.post('http://192.168.100.10:6060/jersey-sample/bitcoin', 
+                  {
+                      edad: this.edad,
+                      valor: this.valor
+                  }, 
+                  {
+                      headers: {
+                          'Content-type': 'application/json'
+                      }
+                  }
+              ).then(function(r) {
+                  // console.log('r: ', JSON.stringify(r, null, 2))
+                  console.log(r.data.resultado)
+              });              
+            } else {
+              if(this.data.a<this.cantidadCompra) {
+                this.tituloOpDenegada = "Operacion inválida";
+                this.modalInfo = "Tu operación no fue aceptada debido a que sólo posees " + this.data.a + " USDT";
+                this.$modal.show('op-denegada');
+              } else {
+                if(this.precioCompra>(this.current*(2-this.delta)) ) {
+                  this.tituloOpDenegada = "Operacion con riesgo";
+                  this.modalInfo = "Tu operación no fue aceptada debido a que el valor de la operación " + this.precioCompra + " es mayor a " + Math.floor(this.current*(2-this.delta))+" USDT."                
+                  this.$modal.show('op-denegada');
+                } else {
+                  alert("ok");
                 }
-            ).then(function(r) {
-                // console.log('r: ', JSON.stringify(r, null, 2))
-                console.log(r.data.resultado)
-            });
+              }
+            }
         }         
-    },
-    mounted: function () {
-    	var vm = this;
-        vm.wsocket = new WebSocket("ws://localhost:8080/WebSocket/orders");
-    	vm.wsocket.onmessage = vm.onMessage;
+      },
+      mounted: function () {
+      	var vm = this;
+          vm.wsocket = new WebSocket("ws://localhost:8080/WebSocket/orders");
+      	  vm.wsocket.onmessage = vm.onMessage;
 
-        vm.wsocket2 = new WebSocket("ws://localhost:8080/WebSocket/websocketendpoint");
-        vm.wsocket2.onmessage = vm.onMessage2;
+          vm.wsocket2 = new WebSocket("ws://localhost:8080/WebSocket/websocketendpoint");
+          vm.wsocket2.onmessage = vm.onMessage2;
 
-        vm.wsocket3 = new WebSocket("ws://localhost:8080/WebSocket/balances");
-        vm.wsocket3.onmessage = vm.onMessage3;     
-
-    }
+          vm.wsocket3 = new WebSocket("ws://localhost:8080/WebSocket/balances");
+          vm.wsocket3.onmessage = vm.onMessage3;     
+      }
 }
+
 </script>
