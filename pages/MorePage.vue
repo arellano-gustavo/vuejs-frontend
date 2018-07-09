@@ -255,18 +255,20 @@ export default {
           this.$modal.hide('op-denegada');
         },
         checaVenta: function() {
-          if(this.data.b<this.cantidadVenta) {
+          if(this.cantidadVenta*this.precioVenta<10) {
+            this.tituloOpDenegada = "Operacion inválida";
+            this.modalInfo = "Tu operación no fue aceptada debido a que el monto total de la operacion ("+(this.cantidadVenta*this.precioVenta)+") es menor a 10 USD";
+            this.$modal.show('op-denegada');            
+          } else if(this.data.b<this.cantidadVenta) {
             this.tituloOpDenegada = "Operacion inválida";
             this.modalInfo = "Tu operación no fue aceptada debido a que sólo posees " + this.data.b + " BTC";
             this.$modal.show('op-denegada');
+          } else if(this.precioVenta<this.current*this.delta ) {
+            this.tituloOpDenegada = "Operacion con riesgo";
+            this.modalInfo = "Tu operación no fue aceptada debido a que el valor de la operación "+this.precioVenta+" es menor a "+Math.floor(this.current*this.delta)+" USDT."
+            this.$modal.show('op-denegada');
           } else {
-            if(this.precioVenta<this.current*this.delta ) {
-              this.tituloOpDenegada = "Operacion con riesgo";
-              this.modalInfo = "Tu operación no fue aceptada debido a que el valor de la operación "+this.precioVenta+" es menor a "+Math.floor(this.current*this.delta)+" USDT."
-              this.$modal.show('op-denegada');
-            } else {
-              alert("ok");
-            }
+            alert("ok");
           }
         },
         checaCompra: function() {          
@@ -289,7 +291,11 @@ export default {
                   console.log(r.data.resultado)
               });              
             } else {
-              if(this.data.a<this.cantidadCompra) {
+              if(this.cantidadCompra*this.precioCompra<10) {
+                this.tituloOpDenegada = "Operacion inválida";
+                this.modalInfo = "Tu operación no fue aceptada debido a que el monto total de la operacion ("+(this.cantidadCompra*this.precioCompra)+") es menor a 10 USD";
+                this.$modal.show('op-denegada');            
+              } else if(this.data.a<this.cantidadCompra) {
                 this.tituloOpDenegada = "Operacion inválida";
                 this.modalInfo = "Tu operación no fue aceptada debido a que sólo posees " + this.data.a + " USDT";
                 this.$modal.show('op-denegada');
