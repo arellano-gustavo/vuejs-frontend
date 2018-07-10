@@ -4,9 +4,6 @@
     <!-- https://codepen.io/tutelagesystems/pen/pjBbxQ -->
     <div id="vueApp">
         <div class="container">
-          <div class="col-sm-12">
-            <h1 style="text-align: center;">Interfaz para trading "Kebblar Capital"</h1>
-          </div>
             <div class="row">
 
               <div class="col-sm-9">
@@ -32,7 +29,7 @@
                             <div class="row">
                                   <div class="col-sm-12">
                                     <div class="form-group">
-                                      <label for="edad">Precio</label>
+                                      <label for="precioCompra">Precio</label>
                                       <!-- https://www.npmjs.com/package/vue-numeric -->
                                       <vue-numeric 
                                         separator="," 
@@ -41,7 +38,7 @@
                                         class="form-control" />                                      
                                     </div>
                                     <div class="form-group">
-                                      <label for="valor">Cantidad</label>
+                                      <label for="cantidadCompra">Cantidad</label>
                                       <vue-numeric 
                                         separator="," 
                                         v-model="cantidadCompra" 
@@ -78,7 +75,7 @@
                             <div class="row">
                                   <div class="col-sm-12">
                                     <div class="form-group">
-                                      <label for="edad">Precio</label>
+                                      <label for="precioVenta">Precio</label>
                                       <vue-numeric 
                                         separator="," 
                                         v-model="precioVenta" 
@@ -86,7 +83,7 @@
                                         class="form-control" />
                                     </div>
                                     <div class="form-group">
-                                      <label for="valor">Cantidad</label>
+                                      <label for="cantidadVenta">Cantidad</label>
                                       <vue-numeric 
                                         separator="," 
                                         v-model="cantidadVenta" 
@@ -250,8 +247,19 @@ export default {
             this.vacio = false;
         },
         cancelOrder(id) {
-            alert('You are deleting user id: ' + id)
-            // axios.delete('https://your.rest.api/users/' + id)
+            //alert('You are deleting user id: ' + id)
+            axios.post('http://localhost:6060/jersey-sample/bitcoin/elimina', 
+                {
+                    orderId: id
+                }, 
+                {
+                    headers: {
+                        'Content-type': 'application/json'
+                    }
+                }
+            ).then(function(r) {
+                alert("Orden '"+id+"' eliminada exitosamente");
+            });   
         },
         closeModal: function() {
           this.$modal.hide('op-denegada');
@@ -270,7 +278,7 @@ export default {
             this.modalInfo = "Tu operación no fue aceptada debido a que el valor de la operación "+this.precioVenta+" es menor a "+Math.floor(this.current*this.delta) + " " + this.minor;
             this.$modal.show('op-denegada');
           } else {
-                  axios.post('http://localhost:6060/jersey-sample/bitcoin', 
+                  axios.post('http://localhost:6060/jersey-sample/bitcoin/coloca', 
                       {
                           valor: this.precioVenta,
                           cantidad: this.cantidadVenta
@@ -282,7 +290,7 @@ export default {
                       }
                   ).then(function(r) {
                       var res = r.data.valor*r.data.cantidad;
-                      var msg = "Acabas de vender " + r.data.cantidad + " BTC por un precio cada uno de " + r.data.valor + " haciendo un total de " + Math.floor(res) + " USDT";
+                      var msg = "Acabas de colocar una posición de venta de " + r.data.cantidad + " BTC por un precio de " + r.data.valor + " cada uno haciendo un total de " + Math.floor(res) + " USDT";
                       alert(msg);
                   });   
           }
@@ -302,7 +310,7 @@ export default {
                   this.modalInfo = "Tu operación no fue aceptada debido a que el valor de la operación " + this.precioCompra + " es mayor a " + Math.floor(this.current*(2-this.delta))+" "+this.minor;                
                   this.$modal.show('op-denegada');
                 } else {
-                  axios.post('http://localhost:6060/jersey-sample/bitcoin', 
+                  axios.post('http://localhost:6060/jersey-sample/bitcoin/coloca', 
                       {
                           valor: this.precioCompra,
                           cantidad: this.cantidadCompra
@@ -314,7 +322,7 @@ export default {
                       }
                   ).then(function(r) {
                       var res = r.data.valor*r.data.cantidad;
-                      var msg = "Acabas de comprar " + r.data.cantidad + " BTC por un precio cada uno de " + r.data.valor + " haciendo un total de " + Math.floor(res) + " BTC";
+                      var msg = "Acabas de colocar una posición de compra de " + r.data.cantidad + " BTC por un precio de " + r.data.valor + " cada uno haciendo un total de " + Math.floor(res) + " BTC";
                       alert(msg);
                   });                     
                 }
