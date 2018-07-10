@@ -21,7 +21,7 @@
                                     <div class="col-sm-8">
                                         <div v-if="vacio">Loading...</div>
                                         <div style="text-align: right;" v-else>
-                                            <label>Saldo: {{ data.a }} USDT</label>
+                                            <label>Saldo: {{ data.a }} {{ minor }}</label>
                                         </div>
                                     </div>
                                 </div>
@@ -33,6 +33,7 @@
                                   <div class="col-sm-12">
                                     <div class="form-group">
                                       <label for="edad">Precio</label>
+                                      <!-- https://www.npmjs.com/package/vue-numeric -->
                                       <vue-numeric 
                                         separator="," 
                                         v-model="precioCompra" 
@@ -66,7 +67,7 @@
                                     <div class="col-sm-8">
                                         <div v-if="vacio">Loading...</div>
                                         <div style="text-align: right;" v-else>
-                                            <label>Saldo: {{ data.b }} BTC</label>
+                                            <label>Saldo: {{ data.b }} {{ major }}</label>
                                         </div>
                                     </div>
                                 </div>
@@ -144,7 +145,7 @@
               <div class="col-sm-3">
                   <div class="card">
                     <div class="card-header">
-                        <label>Valor actual BTC:&nbsp;</label><b>{{ current }}</b>
+                        <label>Valor actual {{ major }}:&nbsp;</label><b>{{ current }}</b>
                     </div>
                     <div class="card-body">
                         <table class="table table-striped">
@@ -200,14 +201,15 @@ import axios from 'axios';
 export default {
   	data: function () {
       	return {
+              major: "BTC",
+              minor: "USDT",
+
               info: "",
               valorz: "",
               data: "",
               vacio: true,
               current: 0,
 
-              edad: "",
-              valor: 1,
               delta: 0.91,
               modalInfo: "",
               tituloOpDenegada: "",
@@ -257,7 +259,7 @@ export default {
         checaVenta: function() {
           if(this.cantidadVenta*this.precioVenta<10) {
             this.tituloOpDenegada = "Operacion inválida";
-            this.modalInfo = "Tu operación no fue aceptada debido a que el monto total de la operacion ("+(this.cantidadVenta*this.precioVenta)+") es menor a 10 USD";
+            this.modalInfo = "Tu operación no fue aceptada debido a que el monto total de la operacion ("+(this.cantidadVenta*this.precioVenta)+") es menor a 10 " + this.minor;
             this.$modal.show('op-denegada');            
           } else if(this.data.b<this.cantidadVenta) {
             this.tituloOpDenegada = "Operacion inválida";
@@ -265,50 +267,59 @@ export default {
             this.$modal.show('op-denegada');
           } else if(this.precioVenta<this.current*this.delta ) {
             this.tituloOpDenegada = "Operacion con riesgo";
-            this.modalInfo = "Tu operación no fue aceptada debido a que el valor de la operación "+this.precioVenta+" es menor a "+Math.floor(this.current*this.delta)+" USDT."
+            this.modalInfo = "Tu operación no fue aceptada debido a que el valor de la operación "+this.precioVenta+" es menor a "+Math.floor(this.current*this.delta) + " " + this.minor;
             this.$modal.show('op-denegada');
           } else {
-            alert("ok");
+                  axios.post('http://localhost:6060/jersey-sample/bitcoin', 
+                      {
+                          valor: this.precioVenta,
+                          cantidad: this.cantidadVenta
+                      }, 
+                      {
+                          headers: {
+                              'Content-type': 'application/json'
+                          }
+                      }
+                  ).then(function(r) {
+                      var res = r.data.valor*r.data.cantidad;
+                      var msg = "Acabas de vender " + r.data.cantidad + " BTC por un precio cada uno de " + r.data.valor + " haciendo un total de " + Math.floor(res) + " USDT";
+                      alert(msg);
+                  });   
           }
         },
-        checaCompra: function() {          
-            //var vm = this;
-            // this.ajaxRequest = true;
-            if(false) {
-              console.log(this.edad);
-              axios.post('http://192.168.100.10:6060/jersey-sample/bitcoin', 
-                  {
-                      edad: this.edad,
-                      valor: this.valor
-                  }, 
-                  {
-                      headers: {
-                          'Content-type': 'application/json'
-                      }
-                  }
-              ).then(function(r) {
-                  // console.log('r: ', JSON.stringify(r, null, 2))
-                  console.log(r.data.resultado)
-              });              
-            } else {
+        checaCompra: function() {            
               if(this.cantidadCompra*this.precioCompra<10) {
                 this.tituloOpDenegada = "Operacion inválida";
-                this.modalInfo = "Tu operación no fue aceptada debido a que el monto total de la operacion ("+(this.cantidadCompra*this.precioCompra)+") es menor a 10 USD";
+                this.modalInfo = "Tu operación no fue aceptada debido a que el monto total de la operacion ("+(this.cantidadCompra*this.precioCompra)+") es menor a 10 " + this.minor;
                 this.$modal.show('op-denegada');            
               } else if(this.data.a<this.cantidadCompra) {
                 this.tituloOpDenegada = "Operacion inválida";
-                this.modalInfo = "Tu operación no fue aceptada debido a que sólo posees " + this.data.a + " USDT";
+                this.modalInfo = "Tu operación no fue aceptada debido a que sólo posees " + this.data.a + " " + this.major;
                 this.$modal.show('op-denegada');
               } else {
                 if(this.precioCompra>(this.current*(2-this.delta)) ) {
                   this.tituloOpDenegada = "Operacion con riesgo";
-                  this.modalInfo = "Tu operación no fue aceptada debido a que el valor de la operación " + this.precioCompra + " es mayor a " + Math.floor(this.current*(2-this.delta))+" USDT."                
+                  this.modalInfo = "Tu operación no fue aceptada debido a que el valor de la operación " + this.precioCompra + " es mayor a " + Math.floor(this.current*(2-this.delta))+" "+this.minor;                
                   this.$modal.show('op-denegada');
                 } else {
-                  alert("ok");
+                  axios.post('http://localhost:6060/jersey-sample/bitcoin', 
+                      {
+                          valor: this.precioCompra,
+                          cantidad: this.cantidadCompra
+                      }, 
+                      {
+                          headers: {
+                              'Content-type': 'application/json'
+                          }
+                      }
+                  ).then(function(r) {
+                      var res = r.data.valor*r.data.cantidad;
+                      var msg = "Acabas de comprar " + r.data.cantidad + " BTC por un precio cada uno de " + r.data.valor + " haciendo un total de " + Math.floor(res) + " BTC";
+                      alert(msg);
+                  });                     
                 }
               }
-            }
+            
         }         
       },
       mounted: function () {
