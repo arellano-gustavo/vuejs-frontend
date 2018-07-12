@@ -29,7 +29,7 @@
                             <div class="row">
                                   <div class="col-sm-12">
                                     <div class="form-group">
-                                      <label for="precioCompra">Precio</label>
+                                      <label for="precioCompra">Precio (en {{ minor }})</label>
                                       <!-- https://www.npmjs.com/package/vue-numeric -->
                                       <vue-numeric 
                                         separator="," 
@@ -38,7 +38,7 @@
                                         class="form-control" />                                      
                                     </div>
                                     <div class="form-group">
-                                      <label for="cantidadCompra">Cantidad</label>
+                                      <label for="cantidadCompra">Cantidad (en {{ major }})</label>
                                       <vue-numeric 
                                         separator="," 
                                         v-model="cantidadCompra" 
@@ -75,7 +75,7 @@
                             <div class="row">
                                   <div class="col-sm-12">
                                     <div class="form-group">
-                                      <label for="precioVenta">Precio</label>
+                                      <label for="precioVenta">Precio (en {{ minor }})</label>
                                       <vue-numeric 
                                         separator="," 
                                         v-model="precioVenta" 
@@ -83,7 +83,7 @@
                                         class="form-control" />
                                     </div>
                                     <div class="form-group">
-                                      <label for="cantidadVenta">Cantidad</label>
+                                      <label for="cantidadVenta">Cantidad (en {{ major }})</label>
                                       <vue-numeric 
                                         separator="," 
                                         v-model="cantidadVenta" 
@@ -248,9 +248,11 @@ export default {
         },
         cancelOrder(id) {
             //alert('You are deleting user id: ' + id)
-            axios.post('http://localhost:6060/jersey-sample/bitcoin/elimina', 
+            axios.post('http://localhost:6060/crypto-trader/bitcoin/elimina', 
                 {
-                    orderId: id
+                      valor: 0,
+                      cantidad: 0,
+                      accion: id
                 }, 
                 {
                     headers: {
@@ -271,17 +273,18 @@ export default {
             this.$modal.show('op-denegada');            
           } else if(this.data.b<this.cantidadVenta) {
             this.tituloOpDenegada = "Operacion inválida";
-            this.modalInfo = "Tu operación no fue aceptada debido a que sólo posees " + this.data.b + " BTC";
+            this.modalInfo = "Tu operación no fue aceptada debido a que sólo posees " + this.data.b + this.major;
             this.$modal.show('op-denegada');
           } else if(this.precioVenta<this.current*this.delta ) {
             this.tituloOpDenegada = "Operacion con riesgo";
             this.modalInfo = "Tu operación no fue aceptada debido a que el valor de la operación "+this.precioVenta+" es menor a "+Math.floor(this.current*this.delta) + " " + this.minor;
             this.$modal.show('op-denegada');
           } else {
-                  axios.post('http://localhost:6060/jersey-sample/bitcoin/coloca', 
+                  axios.post('http://localhost:6060/crypto-trader/bitcoin/coloca', 
                       {
                           valor: this.precioVenta,
-                          cantidad: this.cantidadVenta
+                          cantidad: this.cantidadVenta,
+                          accion: "venta"
                       }, 
                       {
                           headers: {
@@ -290,7 +293,7 @@ export default {
                       }
                   ).then(function(r) {
                       var res = r.data.valor*r.data.cantidad;
-                      var msg = "Acabas de colocar una posición de venta de " + r.data.cantidad + " BTC por un precio de " + r.data.valor + " cada uno haciendo un total de " + Math.floor(res) + " USDT";
+                      var msg = "Acabas de colocar una posición de venta de " + r.data.cantidad + " BTC por un precio de " + r.data.valor + " cada uno.\nSi se ejecuta, recibirás " + Math.floor(res) + " USDT";
                       alert(msg);
                   });   
           }
@@ -300,9 +303,9 @@ export default {
                 this.tituloOpDenegada = "Operacion inválida";
                 this.modalInfo = "Tu operación no fue aceptada debido a que el monto total de la operacion ("+(this.cantidadCompra*this.precioCompra)+") es menor a 10 " + this.minor;
                 this.$modal.show('op-denegada');            
-              } else if(this.data.a<this.cantidadCompra) {
+              } else if(this.data.a/this.current<this.cantidadCompra) {
                 this.tituloOpDenegada = "Operacion inválida";
-                this.modalInfo = "Tu operación no fue aceptada debido a que sólo posees " + this.data.a + " " + this.major;
+                this.modalInfo = "Tu operación no fue aceptada debido a que sólo posees " + this.data.a/this.current + " " + this.major;
                 this.$modal.show('op-denegada');
               } else {
                 if(this.precioCompra>(this.current*(2-this.delta)) ) {
@@ -310,10 +313,11 @@ export default {
                   this.modalInfo = "Tu operación no fue aceptada debido a que el valor de la operación " + this.precioCompra + " es mayor a " + Math.floor(this.current*(2-this.delta))+" "+this.minor;                
                   this.$modal.show('op-denegada');
                 } else {
-                  axios.post('http://localhost:6060/jersey-sample/bitcoin/coloca', 
+                  axios.post('http://localhost:6060/crypto-trader/bitcoin/coloca', 
                       {
                           valor: this.precioCompra,
-                          cantidad: this.cantidadCompra
+                          cantidad: this.cantidadCompra,
+                          accion: "compra"
                       }, 
                       {
                           headers: {
@@ -322,7 +326,7 @@ export default {
                       }
                   ).then(function(r) {
                       var res = r.data.valor*r.data.cantidad;
-                      var msg = "Acabas de colocar una posición de compra de " + r.data.cantidad + " BTC por un precio de " + r.data.valor + " cada uno haciendo un total de " + Math.floor(res) + " BTC";
+                      var msg = "Acabas de colocar una posición de compra de " + r.data.cantidad + " BTC por un precio de " + r.data.valor + " cada uno.\nSi se ejecuta, habrás gastado " + Math.floor(res) + " USDT";
                       alert(msg);
                   });                     
                 }
@@ -331,14 +335,15 @@ export default {
         }         
       },
       mounted: function () {
-      	var vm = this;
-          vm.wsocket = new WebSocket("ws://localhost:8080/WebSocket/orders");
+        var host="localhost:8080"
+          var vm = this;
+          vm.wsocket = new WebSocket("ws://"+host+"/WebSocket/orders");
       	  vm.wsocket.onmessage = vm.onMessage;
 
-          vm.wsocket2 = new WebSocket("ws://localhost:8080/WebSocket/websocketendpoint");
+          vm.wsocket2 = new WebSocket("ws://"+host+"/WebSocket/websocketendpoint");
           vm.wsocket2.onmessage = vm.onMessage2;
 
-          vm.wsocket3 = new WebSocket("ws://localhost:8080/WebSocket/balances");
+          vm.wsocket3 = new WebSocket("ws://"+host+"/WebSocket/balances");
           vm.wsocket3.onmessage = vm.onMessage3;     
       }
 }
