@@ -1,13 +1,23 @@
 import Vuex from 'vuex'
 import Vue from 'vue'
-import cart from './cart'
-import products from './products'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  modules: {
-    cart,
-    products
+  state: {
+  	sender:'',
+  	usuario:'',
+  	urlWs:'13.57.5.179',
+  	portWs:'10002',
+  	urlRest:'',
+  	portRest:''
+  },
+  mutations: {
+  	setState(state, data) {
+  		state.sender = data.sender;
+  		state.usuario = data.usua;
+  		state.urlRest = data.ip;
+  		state.portRest = data.port;
+  	}
   }
 })

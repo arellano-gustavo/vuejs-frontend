@@ -105,7 +105,7 @@
                 
                 <div class="row">
                     <div class="col-sm-12">
-                        <h3>Listado de posiciones colocadas</h3>
+                        <h3>Listado de posiciones colocadas {{ info2 }}</h3>
                     </div>
                   <div class="col-sm-12">
                     <table class="table table-striped">
@@ -194,6 +194,7 @@
 
 <script>
 import axios from 'axios';
+import store from '../store'
 
 export default {
   	data: function () {
@@ -202,6 +203,7 @@ export default {
               minor: "USDT",
 
               info: "",
+              info2: "",
               valorz: "",
               data: "",
               vacio: true,
@@ -221,7 +223,10 @@ export default {
 
               debug: false,
               ajaxRequest: false,
-              postResults: []
+              postResults: [],
+
+              hostWs: "abc",
+              hostRest: "xyz"
       	}
   	},
     created() {
@@ -248,7 +253,11 @@ export default {
         },
         cancelOrder(id) {
             //alert('You are deleting user id: ' + id)
-            axios.post('http://localhost:6060/crypto-trader/bitcoin/elimina', 
+            axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
+            axios.get(url).then(response => {
+              this.results = response.data
+            })
+            axios.post('http://'+this.hostRest+'/crypto-trader/bitcoin/elimina', 
                 {
                       valor: 0,
                       cantidad: 0,
@@ -256,11 +265,16 @@ export default {
                 }, 
                 {
                     headers: {
-                        'Content-type': 'application/json'
+                        'Content-type': 'application/json',
+                        'crossDomain': true,
+                        'Acces-Control-Allow-Origin': '*'
                     }
                 }
-            ).then(function(r) {
-                alert("Orden '"+id+"' eliminada exitosamente");
+            ).then(r => {
+                var msg = "Orden '"+id+"' eliminada exitosamente";
+                this.tituloOpDenegada = "Operacion procesada";
+                this.modalInfo = msg;
+                this.$modal.show('op-denegada');                
             });   
         },
         closeModal: function() {
@@ -280,7 +294,8 @@ export default {
             this.modalInfo = "Tu operación no fue aceptada debido a que el valor de la operación "+this.precioVenta+" es menor a "+Math.floor(this.current*this.delta) + " " + this.minor;
             this.$modal.show('op-denegada');
           } else {
-                  axios.post('http://localhost:6060/crypto-trader/bitcoin/coloca', 
+                  axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
+                  axios.post('http://'+this.hostRest+'/crypto-trader/bitcoin/coloca', 
                       {
                           valor: this.precioVenta,
                           cantidad: this.cantidadVenta,
@@ -288,13 +303,18 @@ export default {
                       }, 
                       {
                           headers: {
-                              'Content-type': 'application/json'
+                              'Content-type': 'application/json',
+                              'crossDomain': true,
+                              'Acces-Control-Allow-Origin': '*' 
                           }
                       }
-                  ).then(function(r) {
+                  ).then(r => {
                       var res = r.data.valor*r.data.cantidad;
                       var msg = "Acabas de colocar una posición de venta de " + r.data.cantidad + " BTC por un precio de " + r.data.valor + " cada uno.\nSi se ejecuta, recibirás " + Math.floor(res) + " USDT";
-                      alert(msg);
+                      //alert(msg);
+                      this.tituloOpDenegada = "Operacion procesada";
+                      this.modalInfo = msg;
+                      this.$modal.show('op-denegada');
                   });   
           }
         },
@@ -308,43 +328,58 @@ export default {
                 this.modalInfo = "Tu operación no fue aceptada debido a que sólo posees " + this.data.a/this.current + " " + this.major;
                 this.$modal.show('op-denegada');
               } else {
-                if(this.precioCompra>(this.current*(2-this.delta)) ) {
-                  this.tituloOpDenegada = "Operacion con riesgo";
-                  this.modalInfo = "Tu operación no fue aceptada debido a que el valor de la operación " + this.precioCompra + " es mayor a " + Math.floor(this.current*(2-this.delta))+" "+this.minor;                
-                  this.$modal.show('op-denegada');
-                } else {
-                  axios.post('http://localhost:6060/crypto-trader/bitcoin/coloca', 
-                      {
-                          valor: this.precioCompra,
-                          cantidad: this.cantidadCompra,
-                          accion: "compra"
-                      }, 
-                      {
-                          headers: {
-                              'Content-type': 'application/json'
+                    if(this.precioCompra>(this.current*(2-this.delta)) ) {
+                      this.tituloOpDenegada = "Operacion con riesgo";
+                      this.modalInfo = "Tu operación no fue aceptada debido a que el valor de la operación " + this.precioCompra + " es mayor a " + Math.floor(this.current*(2-this.delta))+" "+this.minor;                
+                      this.$modal.show('op-denegada');
+                    } else {
+                      axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
+                      axios.post('http://'+this.hostRest+'/crypto-trader/bitcoin/coloca', 
+                          {
+                              valor: this.precioCompra,
+                              cantidad: this.cantidadCompra,
+                              accion: "compra"
+                          }, 
+                          {
+                              headers: {
+                                  'Content-type': 'application/json',
+                                  'crossDomain': true,
+                                  'Acces-Control-Allow-Origin': '*' 
+                              },
+                              mode: 'no-cors',
+                              credentials: 'same-origin'
                           }
-                      }
-                  ).then(function(r) {
-                      var res = r.data.valor*r.data.cantidad;
-                      var msg = "Acabas de colocar una posición de compra de " + r.data.cantidad + " BTC por un precio de " + r.data.valor + " cada uno.\nSi se ejecuta, habrás gastado " + Math.floor(res) + " USDT";
-                      alert(msg);
-                  });                     
-                }
+                      ).then(r => {
+                          var res = r.data.valor*r.data.cantidad;
+                          var msg = "Acabas de colocar una posición de compra de " + r.data.cantidad + " BTC por un precio de " + r.data.valor + " cada uno.\nSi se ejecuta, habrás gastado " + Math.floor(res) + " USDT";
+                          this.tituloOpDenegada = "Operacion procesada";
+                          this.modalInfo = msg;
+                          this.$modal.show('op-denegada');                      
+                      }); 
+                    }
               }
-            
         }         
       },
       mounted: function () {
-        var host="localhost:8080"
-          var vm = this;
-          vm.wsocket = new WebSocket("ws://"+host+"/WebSocket/orders");
-      	  vm.wsocket.onmessage = vm.onMessage;
+          this.hostWs = store.state.urlWs+":"+store.state.portWs;
+          this.hostRest = '13.57.5.179:10003';//store.state.urlRest+":"+store.state.portRest;
+          console.log("7:"+this.hostWs);
+          console.log("8:"+this.hostRest);
 
-          vm.wsocket2 = new WebSocket("ws://"+host+"/WebSocket/websocketendpoint");
-          vm.wsocket2.onmessage = vm.onMessage2;
+          var wsocket = new WebSocket("ws://"+this.hostWs+"/WebSocket/orders");
+      	  wsocket.onmessage = this.onMessage;
 
-          vm.wsocket3 = new WebSocket("ws://"+host+"/WebSocket/balances");
-          vm.wsocket3.onmessage = vm.onMessage3;     
+          var wsocket2 = new WebSocket("ws://"+this.hostWs+"/WebSocket/websocketendpoint");
+          wsocket2.onmessage = this.onMessage2;
+
+          var wsocket3 = new WebSocket("ws://"+this.hostWs+"/WebSocket/balances");
+          wsocket3.onmessage = this.onMessage3;     
+      },
+      computed: {
+          getUrl() {
+            console.log('4:'+store.state.urlWs);
+            return store.state.urlWs;
+          }
       }
 }
 
