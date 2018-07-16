@@ -7,8 +7,8 @@ export default new Vuex.Store({
   state: {
   	sender:'',
   	usuario:'',
-  	urlWs:'13.57.5.179',
-  	portWs:'10002',
+  	urlWs:'',
+  	portWs:'',
   	urlRest:'',
   	portRest:''
   },
@@ -18,6 +18,8 @@ export default new Vuex.Store({
   		state.usuario = data.usua;
   		state.urlRest = data.ip;
   		state.portRest = data.port;
+      state.urlWs = data.ip;
+      state.portWs = data.port-1;
   	}
   }
 })

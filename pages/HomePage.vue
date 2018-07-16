@@ -79,7 +79,7 @@ export default {
               console.log(this.usr);
               console.log(this.psw);
               axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';            
-              axios.post('http://13.57.5.179:10001/crypto-trader/bitcoin/login', 
+              axios.post('http://192.168.100.14:10001/crypto-trader/bitcoin/login', 
               {
                   usuario: this.usr,
                   password: this.psw
@@ -111,14 +111,14 @@ export default {
             }
           });
         },   
-        other: function() {
+        checkCredentials2: function() {
               store.commit('setState',   {
                 ip:'192.168.100.10', 
                 port:'6060', 
                 usua:'Gustavo Arellano',
                 sender:'trader01'
               });
-              //router.push('/more');
+              router.push('/more');
         }         
     },
     mounted: function () {

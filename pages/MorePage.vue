@@ -4,6 +4,11 @@
     <!-- https://codepen.io/tutelagesystems/pen/pjBbxQ -->
     <div id="vueApp">
         <div class="container">
+            <div calaa="row">
+              <div class="col-sm-12">
+                <label>{{ userName }}</label>
+              </div>
+            </div>
             <div class="row">
 
               <div class="col-sm-9">
@@ -124,7 +129,7 @@
                         <td>{{ p.price }}</td>
                         <td>{{ p.origQty }}</td>
                         <td>{{ p.side }}</td>
-                        <td><button @click="cancelOrder(p.orderId)" class="btn btn-warning">delete</button></td>
+                        <td><button @click="cancelOrder(p.clientOrderId)" class="btn btn-warning">delete</button></td>
                       </tr>
                       </tbody>
                     </table>
@@ -208,6 +213,7 @@ export default {
               data: "",
               vacio: true,
               current: 0,
+              userName:'',
 
               delta: 0.91,
               modalInfo: "",
@@ -252,11 +258,7 @@ export default {
             this.vacio = false;
         },
         cancelOrder(id) {
-            //alert('You are deleting user id: ' + id)
             axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
-            axios.get(url).then(response => {
-              this.results = response.data
-            })
             axios.post('http://'+this.hostRest+'/crypto-trader/bitcoin/elimina', 
                 {
                       valor: 0,
@@ -361,8 +363,9 @@ export default {
         }         
       },
       mounted: function () {
+          this.userName = store.state.usuario;
           this.hostWs = store.state.urlWs+":"+store.state.portWs;
-          this.hostRest = '13.57.5.179:10003';//store.state.urlRest+":"+store.state.portRest;
+          this.hostRest = store.state.urlRest+":"+store.state.portRest;
           console.log("7:"+this.hostWs);
           console.log("8:"+this.hostRest);
 
