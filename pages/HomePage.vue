@@ -79,7 +79,7 @@ export default {
               console.log(this.usr);
               console.log(this.psw);
               axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';            
-              axios.post('http://192.168.100.14:10001/crypto-trader/bitcoin/login', 
+              axios.post('http://api.kebblar.capital:10001/crypto-trader/bitcoin/login', 
               {
                   usuario: this.usr,
                   password: this.psw
