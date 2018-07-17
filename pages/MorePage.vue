@@ -6,7 +6,7 @@
         <div class="container">
             <div calaa="row">
               <div class="col-sm-12">
-                <label>{{ userName }}</label>
+                <label>{{ userName }} (Current fee: 0.05% = 0.05/100)</label>
               </div>
             </div>
             <div class="row">
@@ -39,7 +39,7 @@
                                       <vue-numeric 
                                         separator="," 
                                         v-model="precioCompra" 
-                                        v-bind:precision="2"
+                                        v-bind:precision="5"
                                         class="form-control" />                                      
                                     </div>
                                     <div class="form-group">
@@ -47,7 +47,7 @@
                                       <vue-numeric 
                                         separator="," 
                                         v-model="cantidadCompra" 
-                                        v-bind:precision="2"
+                                        v-bind:precision="5"
                                         class="form-control" />                                      
                                     </div>        
                                   </div>
@@ -84,7 +84,7 @@
                                       <vue-numeric 
                                         separator="," 
                                         v-model="precioVenta" 
-                                        v-bind:precision="2"
+                                        v-bind:precision="5"
                                         class="form-control" />
                                     </div>
                                     <div class="form-group">
@@ -92,7 +92,7 @@
                                       <vue-numeric 
                                         separator="," 
                                         v-model="cantidadVenta" 
-                                        v-bind:precision="2"
+                                        v-bind:precision="5"
                                         class="form-control" />
                                     </div>        
                                   </div>
