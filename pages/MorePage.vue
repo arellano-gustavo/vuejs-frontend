@@ -178,7 +178,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                      <tr v-for="p in history" >
+                      <tr v-for="p in history">
                         <td>{{ p.orderId }}</td>
                         <td>{{ p.price }}</td>
                         <td>{{ p.origQty }}</td>
