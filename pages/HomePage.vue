@@ -104,7 +104,7 @@ export default {
                 usua:response.data.name,
                 sender:this.usr
               });
-              router.push('/more');            
+              router.push('/trade');            
             } else {
               this.msgErr = "La combinación Usuario/password es errónea";
               this.$modal.show('mensaje-login');

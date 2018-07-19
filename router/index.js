@@ -45,7 +45,7 @@ export default new Router({
       component: GraphPage
     },
     {
-      path: '/more',
+      path: '/trade',
       name: 'more',
       component: MorePage
     },

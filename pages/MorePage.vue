@@ -6,8 +6,18 @@
         <div class="container">
             <div calaa="row">
               <div class="col-sm-12">
-                <label>{{ userName }} (Current fee: 0.05% = 0.05/100)</label>
+                <label>Trader: {{ userName }}</label>
               </div>
+
+              <div class="col-sm-12">
+                <label>Current fee: 0.05% = 0.05/100</label>
+              </div>
+
+              <div class="col-sm-12">
+                <label>Remanente en BNB's: {{ data.c }}</label>
+              </div>
+
+
             </div>
             <div class="row">
 
@@ -51,9 +61,16 @@
                                         class="form-control" />                                      
                                     </div>        
                                   </div>
-                                  <div class="col-sm-12">
+                                  <div class="col-sm-6">
                                     <a href="#" class="btn btn-success" @click="checaCompra">Comprar</a>
                                   </div>
+
+                                  <div class="col-sm-6">
+                                    <div style="text-align: right;">
+                                      <label>Gasto: {{ totalOperacion(cantidadCompra, precioCompra) }} {{ minor }}</label>
+                                    </div>
+                                  </div>
+
                             </div>
                           </div>
                         </div> 
@@ -96,9 +113,15 @@
                                         class="form-control" />
                                     </div>        
                                   </div>
-                                  <div class="col-sm-12">
+                                  <div class="col-sm-6">
                                     <a href="#" class="btn btn-danger" @click="checaVenta">Vender</a>
                                     <span v-if="ajaxRequest">Please Wait ...</span>
+                                  </div>
+
+                                  <div class="col-sm-6">
+                                    <div style="text-align: right;">
+                                      <label>Gasto: {{ totalOperacion(cantidadVenta, precioVenta) }} {{ major }}</label>
+                                    </div>
                                   </div>
                             </div>
                           </div>
@@ -135,6 +158,42 @@
                     </table>
                   </div>
                 </div><!-- / orders list -->
+
+
+
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h3>Listado histórico de la últimas 50 posiciones</h3>
+                    </div>
+                  <div class="col-sm-12">
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Precio</th>
+                            <th>Cantidad</th>
+                            <th>Tipo</th>
+                            <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      <tr v-for="p in history" >
+                        <td>{{ p.orderId }}</td>
+                        <td>{{ p.price }}</td>
+                        <td>{{ p.origQty }}</td>
+                        <td>{{ p.side }}</td>
+                        <td>{{ p.status }}</td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div><!-- / orders list -->
+
+
+
+
+
 
                 <div class="row" v-if="debug">
                   <div class="col-sm-12">
@@ -202,8 +261,8 @@ import axios from 'axios';
 import store from '../store'
 
 export default {
-  	data: function () {
-      	return {
+        data: function () {
+        return {
               major: "BTC",
               minor: "USDT",
 
@@ -211,6 +270,7 @@ export default {
               info2: "",
               valorz: "",
               data: "",
+              history: "",
               vacio: true,
               current: 0,
               userName:'',
@@ -233,16 +293,15 @@ export default {
 
               hostWs: "abc",
               hostRest: "xyz"
-      	}
-  	},
+        }
+        },
     created() {
     },    
     methods: {
-      	onMessage: function (e) {
-          	//var vm = this;
-          	this.info = JSON.parse(e.data);
-    		},
-        onMessage2: function (e) {
+        totalOperacion: function(a, b) {
+           return a*b;
+        },
+        onMessagePrice: function (e) {
             var vm = this;
             var json = JSON.parse(e.data);
             this.current = json.a;
@@ -253,8 +312,10 @@ export default {
             }
         },
         onMessage3: function (e) {
-            //var vm = this;
-            this.data = JSON.parse(e.data);
+            var response = JSON.parse(e.data); 
+            this.data = response.balance;
+            this.info = response.ordenes;
+            this.history = response.history;
             this.vacio = false;
         },
         cancelOrder(id) {
@@ -366,21 +427,20 @@ export default {
           this.userName = store.state.usuario;
           this.hostWs = store.state.urlWs+":"+store.state.portWs;
           this.hostRest = store.state.urlRest+":"+store.state.portRest;
-          console.log("7:"+this.hostWs);
-          console.log("8:"+this.hostRest);
+          console.log("WebSocket ws://"+this.hostWs + "/WebSocket/balances  (o bien price)");
+          console.log("REST http://"+this.hostRest);
 
-          var wsocket = new WebSocket("ws://"+this.hostWs+"/WebSocket/orders");
-      	  wsocket.onmessage = this.onMessage;
+          //var wsocket = new WebSocket("ws://"+this.hostWs+"/WebSocket/orders");
+          //wsocket.onmessage = this.onMessage;
 
-          var wsocket2 = new WebSocket("ws://"+this.hostWs+"/WebSocket/websocketendpoint");
-          wsocket2.onmessage = this.onMessage2;
+          var wsPrice = new WebSocket("ws://"+this.hostWs+"/WebSocket/price");
+          wsPrice.onmessage = this.onMessagePrice;
 
           var wsocket3 = new WebSocket("ws://"+this.hostWs+"/WebSocket/balances");
           wsocket3.onmessage = this.onMessage3;     
       },
       computed: {
           getUrl() {
-            console.log('4:'+store.state.urlWs);
             return store.state.urlWs;
           }
       }
