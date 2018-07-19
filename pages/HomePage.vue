@@ -76,8 +76,6 @@ export default {
               this.$modal.hide('mensaje-login');
           },     
           checkCredentials: function() {
-              console.log(this.usr);
-              console.log(this.psw);
               axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';            
               axios.post('http://54.241.82.49:10001/crypto-trader/bitcoin/login', 
               {
