@@ -202,8 +202,8 @@ import axios from 'axios';
 import store from '../store'
 
 export default {
-  	data: function () {
-      	return {
+        data: function () {
+        return {
               major: "BTC",
               minor: "USDT",
 
@@ -233,16 +233,12 @@ export default {
 
               hostWs: "abc",
               hostRest: "xyz"
-      	}
-  	},
+        }
+        },
     created() {
     },    
     methods: {
-      	onMessage: function (e) {
-          	//var vm = this;
-          	this.info = JSON.parse(e.data);
-    		},
-        onMessage2: function (e) {
+        onMessagePrice: function (e) {
             var vm = this;
             var json = JSON.parse(e.data);
             this.current = json.a;
@@ -253,8 +249,9 @@ export default {
             }
         },
         onMessage3: function (e) {
-            //var vm = this;
-            this.data = JSON.parse(e.data);
+            var response = JSON.parse(e.data); 
+            this.data = response.balance;
+            this.info = response.ordenes;
             this.vacio = false;
         },
         cancelOrder(id) {
@@ -366,21 +363,20 @@ export default {
           this.userName = store.state.usuario;
           this.hostWs = store.state.urlWs+":"+store.state.portWs;
           this.hostRest = store.state.urlRest+":"+store.state.portRest;
-          console.log("7:"+this.hostWs);
-          console.log("8:"+this.hostRest);
+          console.log("WebSocket ws://"+this.hostWs + "/WebSocket/balances  (o bien price)");
+          console.log("REST http://"+this.hostRest);
 
-          var wsocket = new WebSocket("ws://"+this.hostWs+"/WebSocket/orders");
-      	  wsocket.onmessage = this.onMessage;
+          //var wsocket = new WebSocket("ws://"+this.hostWs+"/WebSocket/orders");
+          //wsocket.onmessage = this.onMessage;
 
-          var wsocket2 = new WebSocket("ws://"+this.hostWs+"/WebSocket/websocketendpoint");
-          wsocket2.onmessage = this.onMessage2;
+          var wsPrice = new WebSocket("ws://"+this.hostWs+"/WebSocket/price");
+          wsPrice.onmessage = this.onMessagePrice;
 
           var wsocket3 = new WebSocket("ws://"+this.hostWs+"/WebSocket/balances");
           wsocket3.onmessage = this.onMessage3;     
       },
       computed: {
           getUrl() {
-            console.log('4:'+store.state.urlWs);
             return store.state.urlWs;
           }
       }

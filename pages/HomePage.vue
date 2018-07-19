@@ -76,10 +76,8 @@ export default {
               this.$modal.hide('mensaje-login');
           },     
           checkCredentials: function() {
-              console.log(this.usr);
-              console.log(this.psw);
               axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';            
-              axios.post('http://54.241.82.49:10001/crypto-trader/bitcoin/login', 
+              axios.post('http://192.168.150.20:10001/crypto-trader/bitcoin/login', 
               {
                   usuario: this.usr,
                   password: this.psw
@@ -104,7 +102,7 @@ export default {
                 usua:response.data.name,
                 sender:this.usr
               });
-              router.push('/more');            
+              router.push('/trade');            
             } else {
               this.msgErr = "La combinación Usuario/password es errónea";
               this.$modal.show('mensaje-login');
