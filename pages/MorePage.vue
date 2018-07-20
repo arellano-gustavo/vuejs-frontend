@@ -120,7 +120,7 @@
 
                                   <div class="col-sm-6">
                                     <div style="text-align: right;">
-                                      <label>Gasto: {{ totalOperacion(cantidadVenta, precioVenta) }} {{ major }}</label>
+                                      <label>Recepción: {{ totalOperacion(cantidadVenta, precioVenta) }} {{ major }}</label>
                                     </div>
                                   </div>
                             </div>
