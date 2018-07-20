@@ -10,7 +10,7 @@
               </div>
 
               <div class="col-sm-12">
-                <label>Current fee: 0.05% = 0.05/100</label>
+                <label>Current fee: Taker=0.1% --> 0.075% | Maker=0.1% --> 0.075%</label>
               </div>
 
               <div class="col-sm-12">
