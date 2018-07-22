@@ -168,7 +168,7 @@
 
                 <div class="row">
                     <div class="col-sm-12">
-                        <h3>Listado histórico de la últimas 50 posiciones</h3>
+                        <h3>Histórico de la últimas 50 posiciones ejecutadas</h3>
                     </div>
                   <div class="col-sm-12">
                     <table class="table table-striped">
