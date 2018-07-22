@@ -262,6 +262,7 @@
 
 <script>
 import axios from 'axios';
+import router from '../router'
 import store from '../store'
 
 export default {
@@ -436,6 +437,10 @@ export default {
       },
       mounted: function () {
           this.userName = store.state.usuario;
+          if(this.userName=="") {
+             console.log("usr is null redirecting to home page");
+             router.push("/");
+          }
           this.hostWs = store.state.urlWs+":"+store.state.portWs;
           this.hostRest = store.state.urlRest+":"+store.state.portRest;
           console.log("WebSocket ws://"+this.hostWs + "/WebSocket/balances  (o bien price)");
