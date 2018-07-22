@@ -4,19 +4,23 @@
     <!-- https://codepen.io/tutelagesystems/pen/pjBbxQ -->
     <div id="vueApp">
         <div class="container">
-            <div calaa="row">
+            <div class="row">
               <div class="col-sm-12">
-                <label>Trader: {{ userName }}</label>
+                <div style="text-align:right;">Trader: {{ userName }}</div>
               </div>
 
               <div class="col-sm-12">
-                <label>Current fee: Taker=0.1% --> 0.075% | Maker=0.1% --> 0.075%</label>
+                <div style="text-align:right;">Current fee: Taker=0.1% --> 0.075% | Maker=0.1% --> 0.075%</div>
               </div>
 
               <div class="col-sm-12">
-                <label>Remanente en BNB's: {{ data.c }}</label>
+                <div style="text-align:right;">Remanente en BNB's: {{ data.c }}</div>
               </div>
 
+
+              <div class="col-sm-12">
+                <div style="text-align:right;">Meta: 0.303 BTC | Actual: {{ meta(data.a, data.b, current) }}</div>
+              </div>
 
             </div>
             <div class="row">
@@ -120,7 +124,7 @@
 
                                   <div class="col-sm-6">
                                     <div style="text-align: right;">
-                                      <label>Recepción: {{ totalOperacion(cantidadVenta, precioVenta) }} {{ major }}</label>
+                                      <label>Recepción: {{ totalOperacion(cantidadVenta, precioVenta) }} {{ minor }}</label>
                                     </div>
                                   </div>
                             </div>
@@ -300,6 +304,13 @@ export default {
     methods: {
         totalOperacion: function(a, b) {
            return a*b;
+        },
+        meta: function(a, b, c) {
+           console.log("a:"+a);
+           console.log("b:"+b);
+           console.log("c:"+c);
+           var r = (a/c) + b;
+           return "...";
         },
         onMessagePrice: function (e) {
             var vm = this;
