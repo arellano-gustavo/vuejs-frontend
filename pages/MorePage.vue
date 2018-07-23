@@ -221,6 +221,8 @@
                         </table>              
                     </div>
                   </div>
+                  <hr/>
+                  <a href="#" class="btn btn-primary" @click="zape">Zape !!!</a>
               </div><!-- / coninuous price list-->
 
             </div><!-- / main row -->
@@ -307,9 +309,10 @@ export default {
            return a*b;
         },
         meta: function(a, b, c) {
-           console.log("a:"+a);
-           console.log("b:"+b);
-           console.log("c:"+c);
+           //console.log("a:"+a);
+           //console.log("b:"+b);
+           //console.log("c:"+c);
+           
            var r = (a/c) + b;
            return "...";
         },
@@ -392,6 +395,21 @@ export default {
                       this.$modal.show('op-denegada');
                   });   
           }
+        },
+        zape : function() {
+          this.hostWs = store.state.urlWs+":"+store.state.portWs;
+          this.hostRest = store.state.urlRest+":"+store.state.portRest;
+
+          console.log("RELOAD !!!!!!!!!!!!!!!!!!!!!!");
+          console.log("WebSocket ws://"+this.hostWs + "/WebSocket/balances  (o bien price)");
+          console.log("REST http://"+this.hostRest);
+
+
+          var wsPrice = new WebSocket("ws://"+this.hostWs+"/WebSocket/price");
+          wsPrice.onmessage = this.onMessagePrice;
+
+          var wsocket3 = new WebSocket("ws://"+this.hostWs+"/WebSocket/balances");
+          wsocket3.onmessage = this.onMessage3;
         },
         checaCompra: function() {            
               if(this.cantidadCompra*this.precioCompra<10) {
