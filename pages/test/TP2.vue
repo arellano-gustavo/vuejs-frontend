@@ -6,17 +6,25 @@
         <div class="container">
             <div class="row">
               <div class="col-sm-12">
-                <div>Trader: {{ userName }}</div>
+
+
+  <task-list></task-list>
+
+
               </div>
 
               <div class="col-sm-12">
-                <div style="text-align:right;">Fee: T=0.075% | M=0.075%</div>
+                <div style="text-align:right;">Current fee: Taker=0.1% --> 0.075% | Maker=0.1% --> 0.075%</div>
               </div>
 
               <div class="col-sm-12">
                 <div style="text-align:right;">Remanente en BNB's: {{ data.c }}</div>
               </div>
 
+
+              <div class="col-sm-12">
+                <div style="text-align:right;">Meta: 0.303 BTC | Actual: {{ meta(data.a, data.b, current) }}</div>
+              </div>
 
             </div>
             <div class="row">
@@ -61,24 +69,6 @@
                                         class="form-control" />                                      
                                     </div>        
                                   </div>
-                             </div>
-
-                             <div class="row"> 
-                                  <div class="col-sm-3">
-                                    <a href="#" class="btn btn-info" @click="asigna(true, 25, data.a)">25%</a>
-                                  </div>
-                                  <div class="col-sm-3">
-                                    <a href="#" class="btn btn-info" @click="asigna(true, 50, data.a)">50%</a>
-                                  </div>
-                                  <div class="col-sm-3">
-                                    <a href="#" class="btn btn-info" @click="asigna(true, 75, data.a)">75%</a>
-                                  </div>                      
-                                  <div class="col-sm-3">
-                                    <a href="#" class="btn btn-info" @click="asigna(true, 100, data.a)">100%</a>
-                                  </div>
-                            </div>
-                            <hr/>
-                            <div class="row">
                                   <div class="col-sm-6">
                                     <a href="#" class="btn btn-success" @click="checaCompra">Comprar</a>
                                   </div>
@@ -88,6 +78,7 @@
                                       <label>Gasto: {{ totalOperacion(cantidadCompra, precioCompra) }} {{ minor }}</label>
                                     </div>
                                   </div>
+
                             </div>
                           </div>
                         </div> 
@@ -130,24 +121,6 @@
                                         class="form-control" />
                                     </div>        
                                   </div>
-                             </div>
-
-                             <div class="row">
-                                  <div class="col-sm-3">
-                                    <a href="#" class="btn btn-info" @click="asigna(true, 25, data.a)">25%</a>
-                                  </div>
-                                  <div class="col-sm-3">
-                                    <a href="#" class="btn btn-info" @click="asigna(true, 50, data.a)">50%</a>
-                                  </div>
-                                  <div class="col-sm-3">
-                                    <a href="#" class="btn btn-info" @click="asigna(true, 75, data.a)">75%</a>
-                                  </div>
-                                  <div class="col-sm-3">
-                                    <a href="#" class="btn btn-info" @click="asigna(true, 100, data.a)">100%</a>
-                                  </div>
-                            </div>
-                            <hr/>
-                            <div class="row">
                                   <div class="col-sm-6">
                                     <a href="#" class="btn btn-danger" @click="checaVenta">Vender</a>
                                     <span v-if="ajaxRequest">Please Wait ...</span>
@@ -295,8 +268,11 @@
 
 <script>
 import axios from 'axios';
-import router from '../router'
-import store from '../store'
+import router from '../../router'
+import store from '../../store'
+//import TaskList from '@/components/Task-List'
+
+//Vue.component('task-list', require('../../components/Task-List.vue'));
 
 export default {
         data: function () {
@@ -336,9 +312,6 @@ export default {
     created() {
     },    
     methods: {
-        asigna: function(a, b, c) {
-           console.log(a+"  "+b+"  "+c);
-        },
         totalOperacion: function(a, b) {
            return a*b;
         },
@@ -492,7 +465,7 @@ export default {
           if(this.userName=="") {
              console.log("usr is null redirecting to home page");
              router.push("/");
-          } else {
+          }
           this.hostWs = store.state.urlWs+":"+store.state.portWs;
           this.hostRest = store.state.urlRest+":"+store.state.portRest;
           console.log("WebSocket ws://"+this.hostWs + "/WebSocket/balances  (o bien price)");
@@ -505,8 +478,7 @@ export default {
           wsPrice.onmessage = this.onMessagePrice;
 
           var wsocket3 = new WebSocket("ws://"+this.hostWs+"/WebSocket/balances");
-          wsocket3.onmessage = this.onMessage3;
-          }     
+          wsocket3.onmessage = this.onMessage3;     
       },
       computed: {
           getUrl() {
@@ -516,4 +488,3 @@ export default {
 }
 
 </script>
-

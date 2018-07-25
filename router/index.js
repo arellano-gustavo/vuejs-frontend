@@ -8,7 +8,8 @@ import AxPage from '@/pages/AxPage'
 import GraphPage from '@/pages/GraphPage'
 import MorePage from '@/pages/MorePage'
 import PbaPostPage from '@/pages/PbaPostPage'
-
+import ExamplePage from '@/pages/test/TP'
+import LabPage from '@/pages/test/LabPage'
 
 Vue.use(Router)
 
@@ -53,6 +54,17 @@ export default new Router({
       path: '/pba',
       name: 'pba',
       component: PbaPostPage
+    },
+    {
+      path: '/prueba',
+      name: 'prueba',
+      component: ExamplePage
+    },
+    {
+      path: '/lab',
+      name: 'lab',
+      component: LabPage
     }
+
   ]
 })

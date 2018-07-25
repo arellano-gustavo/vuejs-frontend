@@ -6,7 +6,7 @@
         <div class="container">
             <div class="row">
               <div class="col-sm-12">
-                <div>Trader: {{ userName }}</div>
+                <div>Trader:: {{ userName }}</div>
               </div>
 
               <div class="col-sm-12">
@@ -285,7 +285,47 @@
     </div>
 </modal>
 
-
+<modal
+    name="operaciones"
+    :clickToClose="false"
+    :reset="true"
+    :width="480"
+    :height="260">
+  <div class="card">
+    <div class="card-header">
+       Listado de posiciones
+    </div>
+    <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h3>Listado de posiciones colocadas {{ info2 }}</h3>
+                    </div>
+                  <div class="col-sm-12">
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Precio</th>
+                            <th>Cantidad</th>
+                            <th>Tipo</th>
+                            <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      <tr v-for="p in info" >
+                        <td>{{ p.orderId }}</td>
+                        <td>{{ p.price }}</td>
+                        <td>{{ p.origQty }}</td>
+                        <td>{{ p.side }}</td>
+                        <td><button @click="cancelOrder(p.clientOrderId)" class="btn btn-warning">delete</button></td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div><!-- / orders list -->
+    </div>
+  </div>
+</modal>
 
 
 
@@ -295,8 +335,8 @@
 
 <script>
 import axios from 'axios';
-import router from '../router'
-import store from '../store'
+import router from '../../router'
+import store from '../../store'
 
 export default {
         data: function () {
