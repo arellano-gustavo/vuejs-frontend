@@ -567,8 +567,8 @@ export default {
                     }
               }
         }         
-      },
-      mounted: function () {
+    },
+    mounted: function () {
           this.userName = store.state.usuario;
           if(this.userName=="") {
              console.log("usr is null redirecting to home page");
@@ -588,12 +588,12 @@ export default {
           var wsocket3 = new WebSocket("ws://"+this.hostWs+"/WebSocket/balances");
           wsocket3.onmessage = this.onMessage3;
           }     
-      },
-      computed: {
+    },
+    computed: {
           getUrl() {
             return store.state.urlWs;
           }
-      }
+    }
 }
 
 </script>
