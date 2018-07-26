@@ -5,20 +5,22 @@
     <div id="vueApp">
         <div class="container">
             <div class="row">
-              <div class="col-sm-12">
+              <div class="col-sm-6">
                 <div>Trader: {{ userName }}</div>
               </div>
-
-              <div class="col-sm-12">
+              <div class="col-sm-6">
                 <div style="text-align:right;">Fee: T=0.075% | M=0.075%</div>
               </div>
+            </div>
 
+            <div class="row">
               <div class="col-sm-12">
                 <div style="text-align:right;">Remanente en BNB's: {{ data.c }}</div>
-              </div>
-
-
+              </div>              
             </div>
+
+            <hr/>
+
             <div class="row">
 
               <div class="col-sm-9">
@@ -49,7 +51,7 @@
                                       <vue-numeric 
                                         separator="," 
                                         v-model="precioCompra" 
-                                        v-bind:precision="5"
+                                        v-bind:precision="7"
                                         class="form-control" />                                      
                                     </div>
                                     <div class="form-group">
@@ -57,7 +59,7 @@
                                       <vue-numeric 
                                         separator="," 
                                         v-model="cantidadCompra" 
-                                        v-bind:precision="5"
+                                        v-bind:precision="7"
                                         class="form-control" />                                      
                                     </div>        
                                   </div>
@@ -65,16 +67,16 @@
 
                              <div class="row"> 
                                   <div class="col-sm-3">
-                                    <a href="#" class="btn btn-info" @click="asigna(true, 25, data.a)">25%</a>
-                                  </div>
-                                  <div class="col-sm-3">
-                                    <a href="#" class="btn btn-info" @click="asigna(true, 50, data.a)">50%</a>
+                                    <a href="#" class="btn btn-info" @click="asigna(true, 100, data.a)">100%</a>
                                   </div>
                                   <div class="col-sm-3">
                                     <a href="#" class="btn btn-info" @click="asigna(true, 75, data.a)">75%</a>
+                                  </div>
+                                  <div class="col-sm-3">
+                                    <a href="#" class="btn btn-info" @click="asigna(true, 50, data.a)">50%</a>
                                   </div>                      
                                   <div class="col-sm-3">
-                                    <a href="#" class="btn btn-info" @click="asigna(true, 100, data.a)">100%</a>
+                                    <a href="#" class="btn btn-info" @click="asigna(true, 25, data.a)">25%</a>
                                   </div>
                             </div>
                             <hr/>
@@ -118,7 +120,7 @@
                                       <vue-numeric 
                                         separator="," 
                                         v-model="precioVenta" 
-                                        v-bind:precision="5"
+                                        v-bind:precision="7"
                                         class="form-control" />
                                     </div>
                                     <div class="form-group">
@@ -126,7 +128,7 @@
                                       <vue-numeric 
                                         separator="," 
                                         v-model="cantidadVenta" 
-                                        v-bind:precision="5"
+                                        v-bind:precision="7"
                                         class="form-control" />
                                     </div>        
                                   </div>
@@ -134,16 +136,16 @@
 
                              <div class="row">
                                   <div class="col-sm-3">
-                                    <a href="#" class="btn btn-info" @click="asigna(true, 25, data.a)">25%</a>
+                                    <a href="#" class="btn btn-info" @click="asigna(false, 100, data.b)">100%</a>
                                   </div>
                                   <div class="col-sm-3">
-                                    <a href="#" class="btn btn-info" @click="asigna(true, 50, data.a)">50%</a>
+                                    <a href="#" class="btn btn-info" @click="asigna(false, 75, data.b)">75%</a>
                                   </div>
                                   <div class="col-sm-3">
-                                    <a href="#" class="btn btn-info" @click="asigna(true, 75, data.a)">75%</a>
+                                    <a href="#" class="btn btn-info" @click="asigna(false, 50, data.b)">50%</a>
                                   </div>
                                   <div class="col-sm-3">
-                                    <a href="#" class="btn btn-info" @click="asigna(true, 100, data.a)">100%</a>
+                                    <a href="#" class="btn btn-info" @click="asigna(false, 25, data.b)">25%</a>
                                   </div>
                             </div>
                             <hr/>
@@ -164,7 +166,7 @@
                     </div><!-- / vender -->
                 </div> <!-- / sell and buy sections -->
                 
-                <div>&nbsp;</div>
+                <hr/>
                 
                 <div class="row">
                     <div class="col-sm-12">
@@ -197,34 +199,6 @@
 
 
 
-                <div class="row">
-                    <div class="col-sm-12">
-                        <h3>Histórico de la últimas 50 posiciones ejecutadas</h3>
-                    </div>
-                  <div class="col-sm-12">
-                    <table class="table table-striped">
-                      <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Precio</th>
-                            <th>Cantidad</th>
-                            <th>Tipo</th>
-                            <th>Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                      <tr v-for="p in history">
-                        <td>{{ p.orderId }}</td>
-                        <td>{{ p.price }}</td>
-                        <td>{{ p.origQty }}</td>
-                        <td>{{ p.side }}</td>
-                        <td>{{ p.status }}</td>
-                      </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div><!-- / orders list -->
-
 
 
 
@@ -253,9 +227,11 @@
                     </div>
                   </div>
                   <hr/>
-                  <a href="#" class="btn btn-primary" @click="zape">Zape !!!</a>
+                  <button type="button" class="btn btn-primary" @click="zape">
+                    <span class="glyphicon glyphicon-search">Refresh</span>
+                  </button>
+                  <a href="#" class="btn btn-primary" @click="openHistory">History</a>                  
               </div><!-- / coninuous price list-->
-
             </div><!-- / main row -->
         </div><!-- / container -->
     </div><!-- / vueApp -->
@@ -286,12 +262,101 @@
 </modal>
 
 
-
+<modal
+    name="operaciones"
+    :clickToClose="false"
+    :reset="true"
+    :width="960"
+    :height="480">
+  <div class="card">
+    <div class="card-header">
+        <div class="row">
+          <div class="col-sm-9">
+              <h3>Histórico de la últimas 50 posiciones ejecutadas</h3>
+          </div>
+          <div class="col-sm-3">
+            <div style="text-align: right;">
+              <a href="#" class="btn btn-danger" @click="closeHistory">X</a>
+            </div>            
+          </div>          
+        </div>
+    </div>
+    <div class="card-body scroll">
+                <div class="row">
+                  <div class="col-sm-12">
+                      <table class="table table-striped header-fixed">
+                        <thead>
+                          <tr>
+                              <th>ID</th>
+                              <th>Precio</th>
+                              <th>Cantidad</th>
+                              <th>Tipo</th>
+                              <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="p in history">
+                          <td>{{ p.orderId }}</td>
+                          <td>{{ p.price }}</td>
+                          <td>{{ p.origQty }}</td>
+                          <td>{{ p.side }}</td>
+                          <td>{{ p.status }}</td>
+                        </tr>
+                        </tbody>
+                      </table>
+                  </div>
+                </div><!-- / orders history -->
+                <div class="row">
+                  <div class="col-sm-12">
+                    <label>Scroll to review your full fucking history, dude... </label>
+                  </div>
+                </div>                
+    </div>
+  </div>
+</modal>
 
 
 
   </div>
 </template>
+
+
+
+<style>
+.header-fixed {
+    width: 100% 
+}
+
+.header-fixed > thead,
+.header-fixed > tbody,
+.header-fixed > thead > tr,
+.header-fixed > tbody > tr,
+.header-fixed > thead > tr > th,
+.header-fixed > tbody > tr > td {
+    display: block;
+}
+
+.header-fixed > tbody > tr:after,
+.header-fixed > thead > tr:after {
+    content: ' ';
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+
+.header-fixed > tbody {
+    overflow-y: auto;
+    height: 250px;
+}
+
+.header-fixed > tbody > tr > td,
+.header-fixed > thead > tr > th {
+    width: 20%;
+    float: left;
+}  
+</style>
+
+
 
 <script>
 import axios from 'axios';
@@ -313,7 +378,7 @@ export default {
               current: 0,
               userName:'',
 
-              delta: 0.91,
+              delta: 0.985,
               modalInfo: "",
               tituloOpDenegada: "",
 
@@ -322,7 +387,7 @@ export default {
               precioCompra: 0,
               cantidadCompra: 0,
 
-              dataLenght: 10,
+              dataLenght: 7,
               xLabel: [0,0],            
 
               debug: false,
@@ -337,7 +402,13 @@ export default {
     },    
     methods: {
         asigna: function(a, b, c) {
-           console.log(a+"  "+b+"  "+c);
+           //console.log(a+"  "+b+"  "+c);
+           if(a==true) {
+              this.cantidadCompra = (c*b/100)/this.current;
+           }
+           if(a==false) {
+              this.cantidadVenta = c*b/100;
+           }
         },
         totalOperacion: function(a, b) {
            return a*b;
@@ -383,15 +454,23 @@ export default {
                     }
                 }
             ).then(r => {
-                var msg = "Orden '"+id+"' eliminada exitosamente";
+                var msg = "Orden eliminada exitosamente";
                 this.tituloOpDenegada = "Operacion procesada";
                 this.modalInfo = msg;
-                this.$modal.show('op-denegada');                
+                this.$modal.show('op-denegada');  
+                this.zape();                              
             });   
         },
         closeModal: function() {
           this.$modal.hide('op-denegada');
         },
+        openHistory: function() {
+          this.zape();
+          this.$modal.show('operaciones');
+        },
+        closeHistory: function() {
+          this.$modal.hide('operaciones');
+        },      
         checaVenta: function() {
           if(this.cantidadVenta*this.precioVenta<10) {
             this.tituloOpDenegada = "Operacion inválida";
@@ -427,6 +506,7 @@ export default {
                       this.tituloOpDenegada = "Operacion procesada";
                       this.modalInfo = msg;
                       this.$modal.show('op-denegada');
+                      this.zape();
                   });   
           }
         },
@@ -435,8 +515,8 @@ export default {
           this.hostRest = store.state.urlRest+":"+store.state.portRest;
 
           console.log("RELOAD !!!!!!!!!!!!!!!!!!!!!!");
-          console.log("WebSocket ws://"+this.hostWs + "/WebSocket/balances  (o bien price)");
-          console.log("REST http://"+this.hostRest);
+          //console.log("WebSocket ws://"+this.hostWs + "/WebSocket/balances  (o bien price)");
+          //console.log("REST http://"+this.hostRest);
 
 
           var wsPrice = new WebSocket("ws://"+this.hostWs+"/WebSocket/price");
@@ -483,6 +563,7 @@ export default {
                           this.modalInfo = msg;
                           this.$modal.show('op-denegada');                      
                       }); 
+                      this.zape();                      
                     }
               }
         }         
@@ -495,8 +576,8 @@ export default {
           } else {
           this.hostWs = store.state.urlWs+":"+store.state.portWs;
           this.hostRest = store.state.urlRest+":"+store.state.portRest;
-          console.log("WebSocket ws://"+this.hostWs + "/WebSocket/balances  (o bien price)");
-          console.log("REST http://"+this.hostRest);
+          //console.log("WebSocket ws://"+this.hostWs + "/WebSocket/balances  (o bien price)");
+          //console.log("REST http://"+this.hostRest);
 
           //var wsocket = new WebSocket("ws://"+this.hostWs+"/WebSocket/orders");
           //wsocket.onmessage = this.onMessage;

@@ -197,33 +197,6 @@
 
 
 
-                <div class="row">
-                    <div class="col-sm-12">
-                        <h3>Histórico de la últimas 50 posiciones ejecutadas</h3>
-                    </div>
-                  <div class="col-sm-12">
-                    <table class="table table-striped">
-                      <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Precio</th>
-                            <th>Cantidad</th>
-                            <th>Tipo</th>
-                            <th>Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                      <tr v-for="p in history">
-                        <td>{{ p.orderId }}</td>
-                        <td>{{ p.price }}</td>
-                        <td>{{ p.origQty }}</td>
-                        <td>{{ p.side }}</td>
-                        <td>{{ p.status }}</td>
-                      </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div><!-- / orders list -->
 
 
 
@@ -254,6 +227,7 @@
                   </div>
                   <hr/>
                   <a href="#" class="btn btn-primary" @click="zape">Zape !!!</a>
+                  <a href="#" class="btn btn-primary" @click="openHistory">History</a>
               </div><!-- / coninuous price list-->
 
             </div><!-- / main row -->
@@ -289,40 +263,51 @@
     name="operaciones"
     :clickToClose="false"
     :reset="true"
-    :width="480"
-    :height="260">
+    :width="960"
+    :height="480">
   <div class="card">
     <div class="card-header">
-       Listado de posiciones
+        <div class="row">
+          <div class="col-sm-9">
+              <h3>Histórico de la últimas 50 posiciones ej</h3>
+          </div>
+          <div class="col-sm-3">
+            <div style="text-align: right;">
+              <a href="#" class="btn btn-danger" @click="closeHistory">X</a>
+            </div>            
+          </div>          
+        </div>
     </div>
-    <div class="card-body">
+    <div class="card-body scroll">
                 <div class="row">
-                    <div class="col-sm-12">
-                        <h3>Listado de posiciones colocadas {{ info2 }}</h3>
-                    </div>
                   <div class="col-sm-12">
-                    <table class="table table-striped">
-                      <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Precio</th>
-                            <th>Cantidad</th>
-                            <th>Tipo</th>
-                            <th></th>
+                      <table class="table table-striped header-fixed">
+                        <thead>
+                          <tr>
+                              <th>ID</th>
+                              <th>Precio</th>
+                              <th>Cantidad</th>
+                              <th>Tipo</th>
+                              <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="p in history">
+                          <td>{{ p.orderId }}</td>
+                          <td>{{ p.price }}</td>
+                          <td>{{ p.origQty }}</td>
+                          <td>{{ p.side }}</td>
+                          <td>{{ p.status }}</td>
                         </tr>
-                      </thead>
-                      <tbody>
-                      <tr v-for="p in info" >
-                        <td>{{ p.orderId }}</td>
-                        <td>{{ p.price }}</td>
-                        <td>{{ p.origQty }}</td>
-                        <td>{{ p.side }}</td>
-                        <td><button @click="cancelOrder(p.clientOrderId)" class="btn btn-warning">delete</button></td>
-                      </tr>
-                      </tbody>
-                    </table>
+                        </tbody>
+                      </table>
                   </div>
-                </div><!-- / orders list -->
+                </div><!-- / orders history -->
+                <div class="row">
+                  <div class="col-sm-12">
+                    <label>Scroll to review your full fucking history, dude... </label>
+                  </div>
+                </div>                
     </div>
   </div>
 </modal>
@@ -332,6 +317,42 @@
 
   </div>
 </template>
+
+
+<style>
+.header-fixed {
+    width: 100% 
+}
+
+.header-fixed > thead,
+.header-fixed > tbody,
+.header-fixed > thead > tr,
+.header-fixed > tbody > tr,
+.header-fixed > thead > tr > th,
+.header-fixed > tbody > tr > td {
+    display: block;
+}
+
+.header-fixed > tbody > tr:after,
+.header-fixed > thead > tr:after {
+    content: ' ';
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+
+.header-fixed > tbody {
+    overflow-y: auto;
+    height: 250px;
+}
+
+.header-fixed > tbody > tr > td,
+.header-fixed > thead > tr > th {
+    width: 20%;
+    float: left;
+}  
+</style>
+
 
 <script>
 import axios from 'axios';
@@ -362,7 +383,7 @@ export default {
               precioCompra: 0,
               cantidadCompra: 0,
 
-              dataLenght: 10,
+              dataLenght: 7,
               xLabel: [0,0],            
 
               debug: false,
@@ -431,6 +452,12 @@ export default {
         },
         closeModal: function() {
           this.$modal.hide('op-denegada');
+        },
+        openHistory: function() {
+          this.$modal.show('operaciones');
+        },
+        closeHistory: function() {
+          this.$modal.hide('operaciones');
         },
         checaVenta: function() {
           if(this.cantidadVenta*this.precioVenta<10) {
