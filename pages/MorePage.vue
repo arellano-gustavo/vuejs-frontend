@@ -463,6 +463,7 @@ export default {
         },
         closeModal: function() {
           this.$modal.hide('op-denegada');
+          this.zape();
         },
         openHistory: function() {
           this.zape();
