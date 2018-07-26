@@ -364,7 +364,7 @@ import router from '../router'
 import store from '../store'
 
 export default {
-        data: function () {
+    data: function () {
         return {
               major: "BTC",
               minor: "USDT",
@@ -397,7 +397,7 @@ export default {
               hostWs: "abc",
               hostRest: "xyz"
         }
-        },
+    },
     created() {
     },    
     methods: {
