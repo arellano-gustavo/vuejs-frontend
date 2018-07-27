@@ -404,7 +404,7 @@ export default {
         asigna: function(a, b, c) {
            //console.log(a+"  "+b+"  "+c);
            if(a==true) {
-              this.cantidadCompra = (c*b/100)/this.current;
+              this.cantidadCompra = (c*b/100)/this.precioCompra;
            }
            if(a==false) {
               this.cantidadVenta = c*b/100;
@@ -531,9 +531,9 @@ export default {
                 this.tituloOpDenegada = "Operacion inválida";
                 this.modalInfo = "Tu operación no fue aceptada debido a que el monto total de la operacion ("+(this.cantidadCompra*this.precioCompra)+") es menor a 10 " + this.minor;
                 this.$modal.show('op-denegada');            
-              } else if(this.data.a/this.current<this.cantidadCompra) {
+              } else if(this.data.a/this.precioCompra<this.cantidadCompra) {
                 this.tituloOpDenegada = "Operacion inválida";
-                this.modalInfo = "Tu operación no fue aceptada debido a que sólo posees " + this.data.a/this.current + " " + this.major;
+                this.modalInfo = "Tu operación no fue aceptada debido a que sólo posees " + this.data.a/this.precioCompra + " " + this.major;
                 this.$modal.show('op-denegada');
               } else {
                     if(this.precioCompra>(this.current*(2-this.delta)) ) {
