@@ -404,7 +404,11 @@ export default {
         asigna: function(a, b, c) {
            //console.log(a+"  "+b+"  "+c);
            if(a==true) {
-              this.cantidadCompra = (c*b/100)/this.precioCompra;
+              if(this.precioCompra==0) {
+                this.cantidadCompra = 0;
+              } else {
+                this.cantidadCompra = (c*b/100)/this.precioCompra;
+              }
            }
            if(a==false) {
               this.cantidadVenta = c*b/100;
