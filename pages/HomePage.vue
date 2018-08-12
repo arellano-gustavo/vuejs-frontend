@@ -3,9 +3,12 @@
     <div class="card" style="width: 480px;">
       <div class="card-header">
             <div class="row">
-                <div class="col-sm-12">
+                <div class="col-sm-6">
                     <label>Login al sistema !!!</label>
                 </div>
+                <div class="col-sm-6" style="text-align: right;">
+                    <label>(v2.0)</label>
+                </div>          
             </div>
       </div>
       <div class="card-body">
@@ -77,7 +80,7 @@ export default {
           },     
           checkCredentials: function() {
               axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';            
-              axios.post('http://54.241.82.49:10001/crypto-trader/bitcoin/login', 
+              axios.post('http://192.168.100.14:10001/crypto-trader/bitcoin/login', 
               {
                   usuario: this.usr,
                   password: this.psw
@@ -90,17 +93,18 @@ export default {
                   }
               }
           ).catch(error => {
-              console.log(error);
               this.msgErr = "Ha ocurrido un error de red: " + error;
               this.$modal.show('mensaje-login');            
           }).then(response => {
-            console.log(response);
             if(response.data.succeed=='true') {
               store.commit('setState',   {
-                ip:response.data.ip, 
-                port:response.data.port, 
-                usua:response.data.name,
-                sender:this.usr
+                senderIn:this.usr,
+                usuarioIn:response.data.name,
+                urlRestIn:"192.168.100.14",
+                portRestIn:"6160",
+                urlWsIn:"192.168.100.14",
+                portWsIn:"6159" 
+                //port:response.data.port, 
               });
               router.push('/trade');            
             } else {
@@ -108,16 +112,7 @@ export default {
               this.$modal.show('mensaje-login');
             }
           });
-        },   
-        checkCredentials2: function() {
-              store.commit('setState',   {
-                ip:'192.168.100.10', 
-                port:'6060', 
-                usua:'Gustavo Arellano',
-                sender:'trader01'
-              });
-              router.push('/more');
-        }         
+        }      
     },
     mounted: function () {
     }

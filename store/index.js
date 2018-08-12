@@ -7,19 +7,19 @@ export default new Vuex.Store({
   state: {
   	sender:'',
   	usuario:'',
-  	urlWs:'',
-  	portWs:'',
   	urlRest:'',
-  	portRest:''
+  	portRest:'',
+		urlWs: '',
+		portWs: ''
   },
   mutations: {
   	setState(state, data) {
-  		state.sender = data.sender;
-  		state.usuario = data.usua;
-  		state.urlRest = data.ip;
-  		state.portRest = data.port;
-      state.urlWs = data.ip;
-      state.portWs = data.port-1;
+  		state.sender = data.senderIn;
+			state.usuario = data.usuarioIn;
+  		state.urlRest = data.urlRestIn;
+  		state.portRest = data.portRestIn;
+			state.urlWs = data.urlWsIn;
+      state.portWs = data.portWsIn;
   	}
   }
 })

@@ -10,6 +10,8 @@ import MorePage from '@/pages/MorePage'
 import PbaPostPage from '@/pages/PbaPostPage'
 import ExamplePage from '@/pages/test/TP'
 import LabPage from '@/pages/test/LabPage'
+import Planets from '@/pages/test/Planets'
+
 
 Vue.use(Router)
 
@@ -64,7 +66,11 @@ export default new Router({
       path: '/lab',
       name: 'lab',
       component: LabPage
+    },
+    {
+      path: '/planets',
+      name: 'planets',
+      component: Planets
     }
-
   ]
 })

@@ -227,7 +227,7 @@
                     </div>
                   </div>
                   <hr/>
-                  <button type="button" class="btn btn-primary" @click="zape">
+                  <button type="button" class="btn btn-primary" @click="init">
                     <span class="glyphicon glyphicon-search">Refresh</span>
                   </button>
                   <a href="#" class="btn btn-primary" @click="openHistory">History</a>                  
@@ -377,6 +377,7 @@ export default {
               vacio: true,
               current: 0,
               userName:'',
+              sender:'',
 
               delta: 0.985,
               modalInfo: "",
@@ -402,7 +403,6 @@ export default {
     },    
     methods: {
         asigna: function(a, b, c) {
-           //console.log(a+"  "+b+"  "+c);
            if(a==true) {
               this.cantidadCompra = (c*b/100)/this.current;
            }
@@ -414,10 +414,6 @@ export default {
            return a*b;
         },
         meta: function(a, b, c) {
-           //console.log("a:"+a);
-           //console.log("b:"+b);
-           //console.log("c:"+c);
-           
            var r = (a/c) + b;
            return "...";
         },
@@ -438,13 +434,36 @@ export default {
             this.history = response.history;
             this.vacio = false;
         },
+        init: function() {
+            axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
+            axios.post('http://'+this.hostRest+'/crypto-trader/bitcoin/elimina', 
+                {
+                      valor: 0,
+                      cantidad: 0,
+                      accion: "elimina",
+                      sender: this.sender
+                }, 
+                {
+                    headers: {
+                        'Content-type': 'application/json',
+                        'crossDomain': true,
+                        'Acces-Control-Allow-Origin': '*'
+                    }
+                }
+            ).then(r => {
+                this.data = r.data.balance;
+                this.info = r.data.ordenes;
+                this.vacio = false;                     
+            });  
+        },
         cancelOrder(id) {
             axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
             axios.post('http://'+this.hostRest+'/crypto-trader/bitcoin/elimina', 
                 {
                       valor: 0,
                       cantidad: 0,
-                      accion: id
+                      accion: id,
+                      sender: this.sender
                 }, 
                 {
                     headers: {
@@ -458,15 +477,30 @@ export default {
                 this.tituloOpDenegada = "Operacion procesada";
                 this.modalInfo = msg;
                 this.$modal.show('op-denegada');  
-                this.zape();                              
+                this.data = r.data.balance;
+                this.info = r.data.ordenes;
+                this.vacio = false;                               
             });   
         },
         closeModal: function() {
           this.$modal.hide('op-denegada');
-          this.zape();
         },
         openHistory: function() {
-          this.zape();
+          axios.post('http://'+this.hostRest+'/crypto-trader/bitcoin/hist', 
+              {
+                  id: this.sender
+              }, 
+              {
+                  headers: {
+                      'Content-type': 'application/json',
+                      'crossDomain': true,
+                      'Acces-Control-Allow-Origin': '*' 
+                  }
+              }
+          ).then(r => {
+              this.history = r.data; 
+          }); 
+          //this.history = null;
           this.$modal.show('operaciones');
         },
         closeHistory: function() {
@@ -491,7 +525,8 @@ export default {
                       {
                           valor: this.precioVenta,
                           cantidad: this.cantidadVenta,
-                          accion: "venta"
+                          accion: "venta",
+                          sender: this.sender
                       }, 
                       {
                           headers: {
@@ -501,39 +536,25 @@ export default {
                           }
                       }
                   ).then(r => {
-                      var res = r.data.valor*r.data.cantidad;
-                      var msg = "Acabas de colocar una posición de venta de " + r.data.cantidad + " BTC por un precio de " + r.data.valor + " cada uno.\nSi se ejecuta, recibirás " + Math.floor(res) + " USDT";
-                      //alert(msg);
+                      var res = r.data.operacion.valor*r.data.operacion.cantidad;
+                      var msg = "Acabas de colocar una posición de venta de " + r.data.operacion.cantidad + " BTC por un precio de " + r.data.operacion.valor + " cada uno.\nSi se ejecuta, recibirás " + Math.floor(res) + " USDT";
                       this.tituloOpDenegada = "Operacion procesada";
                       this.modalInfo = msg;
                       this.$modal.show('op-denegada');
-                      this.zape();
+                      this.data = r.data.balance;
+                      this.info = r.data.ordenes;
+                      this.vacio = false; 
                   });   
           }
-        },
-        zape : function() {
-          this.hostWs = store.state.urlWs+":"+store.state.portWs;
-          this.hostRest = store.state.urlRest+":"+store.state.portRest;
-
-          console.log("RELOAD !!!!!!!!!!!!!!!!!!!!!!");
-          //console.log("WebSocket ws://"+this.hostWs + "/WebSocket/balances  (o bien price)");
-          //console.log("REST http://"+this.hostRest);
-
-
-          var wsPrice = new WebSocket("ws://"+this.hostWs+"/WebSocket/price");
-          wsPrice.onmessage = this.onMessagePrice;
-
-          var wsocket3 = new WebSocket("ws://"+this.hostWs+"/WebSocket/balances");
-          wsocket3.onmessage = this.onMessage3;
         },
         checaCompra: function() {            
               if(this.cantidadCompra*this.precioCompra<10) {
                 this.tituloOpDenegada = "Operacion inválida";
                 this.modalInfo = "Tu operación no fue aceptada debido a que el monto total de la operacion ("+(this.cantidadCompra*this.precioCompra)+") es menor a 10 " + this.minor;
                 this.$modal.show('op-denegada');            
-              } else if(this.data.a/this.current<this.cantidadCompra) {
+              } else if(this.data.a/this.precioCompra<this.cantidadCompra) {
                 this.tituloOpDenegada = "Operacion inválida";
-                this.modalInfo = "Tu operación no fue aceptada debido a que sólo posees " + this.data.a/this.current + " " + this.major;
+                this.modalInfo = "->Tu operación no fue aceptada debido a que sólo posees " + this.data.a/this.precioCompra + " " + this.major;
                 this.$modal.show('op-denegada');
               } else {
                     if(this.precioCompra>(this.current*(2-this.delta)) ) {
@@ -546,49 +567,45 @@ export default {
                           {
                               valor: this.precioCompra,
                               cantidad: this.cantidadCompra,
-                              accion: "compra"
+                              accion: "compra",
+                              sender: this.sender
                           }, 
                           {
                               headers: {
                                   'Content-type': 'application/json',
                                   'crossDomain': true,
                                   'Acces-Control-Allow-Origin': '*' 
-                              },
-                              mode: 'no-cors',
-                              credentials: 'same-origin'
+                              }
                           }
                       ).then(r => {
-                          var res = r.data.valor*r.data.cantidad;
-                          var msg = "Acabas de colocar una posición de compra de " + r.data.cantidad + " BTC por un precio de " + r.data.valor + " cada uno.\nSi se ejecuta, habrás gastado " + Math.floor(res) + " USDT";
+                          var res = r.data.operacion.valor*r.data.operacion.cantidad;
+                          var msg = "Acabas de colocar una posición de compra de " + r.data.operacion.cantidad + " BTC por un precio de " + r.data.operacion.valor + " cada uno.\nSi se ejecuta, habrás gastado " + Math.floor(res) + " USDT";
                           this.tituloOpDenegada = "Operacion procesada";
                           this.modalInfo = msg;
-                          this.$modal.show('op-denegada');                      
-                      }); 
-                      this.zape();                      
+                          this.$modal.show('op-denegada');
+                          this.data = r.data.balance;
+                          this.info = r.data.ordenes;
+                          this.vacio = false; 
+                      });                      
                     }
               }
         }         
     },
     mounted: function () {
+          this.sender = store.state.sender;
           this.userName = store.state.usuario;
           if(this.userName=="") {
              console.log("usr is null redirecting to home page");
              router.push("/");
           } else {
-          this.hostWs = store.state.urlWs+":"+store.state.portWs;
-          this.hostRest = store.state.urlRest+":"+store.state.portRest;
-          //console.log("WebSocket ws://"+this.hostWs + "/WebSocket/balances  (o bien price)");
-          //console.log("REST http://"+this.hostRest);
+            this.hostWs = store.state.urlWs+":"+store.state.portWs;
+            this.hostRest = store.state.urlRest+":"+store.state.portRest;
 
-          //var wsocket = new WebSocket("ws://"+this.hostWs+"/WebSocket/orders");
-          //wsocket.onmessage = this.onMessage;
+            var wsPrice = new WebSocket("ws://"+this.hostWs+"/WebSocket/price");
+            wsPrice.onmessage = this.onMessagePrice;
 
-          var wsPrice = new WebSocket("ws://"+this.hostWs+"/WebSocket/price");
-          wsPrice.onmessage = this.onMessagePrice;
-
-          var wsocket3 = new WebSocket("ws://"+this.hostWs+"/WebSocket/balances");
-          wsocket3.onmessage = this.onMessage3;
-          }     
+            this.init();
+          }   
     },
     computed: {
           getUrl() {

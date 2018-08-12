@@ -8,7 +8,7 @@
               <div class="col-sm-12">
                 <div>Trader:: {{ userName }}</div>
               </div>
-
+  
               <div class="col-sm-12">
                 <div style="text-align:right;">Fee: T=0.075% | M=0.075%</div>
               </div>
@@ -265,51 +265,9 @@
     :reset="true"
     :width="960"
     :height="480">
-  <div class="card">
-    <div class="card-header">
-        <div class="row">
-          <div class="col-sm-9">
-              <h3>Histórico de la últimas 50 posiciones ej</h3>
-          </div>
-          <div class="col-sm-3">
-            <div style="text-align: right;">
-              <a href="#" class="btn btn-danger" @click="closeHistory">X</a>
-            </div>            
-          </div>          
-        </div>
-    </div>
-    <div class="card-body scroll">
-                <div class="row">
-                  <div class="col-sm-12">
-                      <table class="table table-striped header-fixed">
-                        <thead>
-                          <tr>
-                              <th>ID</th>
-                              <th>Precio</th>
-                              <th>Cantidad</th>
-                              <th>Tipo</th>
-                              <th>Status</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                        <tr v-for="p in history">
-                          <td>{{ p.orderId }}</td>
-                          <td>{{ p.price }}</td>
-                          <td>{{ p.origQty }}</td>
-                          <td>{{ p.side }}</td>
-                          <td>{{ p.status }}</td>
-                        </tr>
-                        </tbody>
-                      </table>
-                  </div>
-                </div><!-- / orders history -->
-                <div class="row">
-                  <div class="col-sm-12">
-                    <label>Scroll to review your full fucking history, dude... </label>
-                  </div>
-                </div>                
-    </div>
-  </div>
+    <operaciones-card 
+      :hist="history">
+    </operaciones-card>
 </modal>
 
 
@@ -319,45 +277,12 @@
 </template>
 
 
-<style>
-.header-fixed {
-    width: 100% 
-}
-
-.header-fixed > thead,
-.header-fixed > tbody,
-.header-fixed > thead > tr,
-.header-fixed > tbody > tr,
-.header-fixed > thead > tr > th,
-.header-fixed > tbody > tr > td {
-    display: block;
-}
-
-.header-fixed > tbody > tr:after,
-.header-fixed > thead > tr:after {
-    content: ' ';
-    display: block;
-    visibility: hidden;
-    clear: both;
-}
-
-.header-fixed > tbody {
-    overflow-y: auto;
-    height: 250px;
-}
-
-.header-fixed > tbody > tr > td,
-.header-fixed > thead > tr > th {
-    width: 20%;
-    float: left;
-}  
-</style>
-
-
 <script>
 import axios from 'axios';
 import router from '../../router'
 import store from '../../store'
+import OperacionesCard from './OperacionesCard'
+
 
 export default {
         data: function () {
@@ -519,7 +444,7 @@ export default {
                 this.$modal.show('op-denegada');            
               } else if(this.data.a/this.current<this.cantidadCompra) {
                 this.tituloOpDenegada = "Operacion inválida";
-                this.modalInfo = "Tu operación no fue aceptada debido a que sólo posees " + this.data.a/this.current + " " + this.major;
+                this.modalInfo = "Tu operación no fue aceptada debido a que sólo posees " + this.data.a/this.precioCompra + " " + this.major;
                 this.$modal.show('op-denegada');
               } else {
                     if(this.precioCompra>(this.current*(2-this.delta)) ) {
@@ -579,7 +504,10 @@ export default {
           getUrl() {
             return store.state.urlWs;
           }
-      }
+      },
+  components: {
+    OperacionesCard
+  }
 }
 
 </script>
