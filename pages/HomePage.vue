@@ -80,7 +80,7 @@ export default {
           },     
           checkCredentials: function() {
               axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';            
-              axios.post('http://192.168.100.14:10001/crypto-trader/bitcoin/login', 
+              axios.post('http://54.241.82.49:10001/crypto-trader/bitcoin/login', 
               {
                   usuario: this.usr,
                   password: this.psw
@@ -100,9 +100,9 @@ export default {
               store.commit('setState',   {
                 senderIn:this.usr,
                 usuarioIn:response.data.name,
-                urlRestIn:"192.168.100.14",
+                urlRestIn:response.data.ip,
                 portRestIn:"6160",
-                urlWsIn:"192.168.100.14",
+                urlWsIn:response.data.ip,
                 portWsIn:"6159" 
                 //port:response.data.port, 
               });
