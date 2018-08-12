@@ -404,7 +404,11 @@ export default {
     methods: {
         asigna: function(a, b, c) {
            if(a==true) {
-              this.cantidadCompra = (c*b/100)/this.current;
+              if(this.precioCompra==0) {
+                this.cantidadCompra = 0;
+              } else {
+                this.cantidadCompra = (c*b/100)/this.precioCompra;
+              }
            }
            if(a==false) {
               this.cantidadVenta = c*b/100;
@@ -554,7 +558,7 @@ export default {
                 this.$modal.show('op-denegada');            
               } else if(this.data.a/this.precioCompra<this.cantidadCompra) {
                 this.tituloOpDenegada = "Operacion inválida";
-                this.modalInfo = "->Tu operación no fue aceptada debido a que sólo posees " + this.data.a/this.precioCompra + " " + this.major;
+                this.modalInfo = "Tu operación no fue aceptada debido a que sólo posees " + this.data.a/this.precioCompra + " " + this.major;
                 this.$modal.show('op-denegada');
               } else {
                     if(this.precioCompra>(this.current*(2-this.delta)) ) {
