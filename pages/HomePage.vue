@@ -97,7 +97,6 @@ export default {
               this.$modal.show('mensaje-login');            
           }).then(response => {
             if(response.data.succeed=='true') {
-              console.log(response.data);
               store.commit('setState',   {
                 senderIn:this.usr,
                 usuarioIn:response.data.name,
