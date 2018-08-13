@@ -439,6 +439,7 @@ export default {
             this.vacio = false;
         },
         init: function() {
+          console.log("init: --->"+this.sender);
             axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
             axios.post('http://'+this.hostRest+'/crypto-trader/bitcoin/elimina', 
                 {

@@ -55,7 +55,7 @@
 
   </div>
 </template>
-
+ 
 
 
 
@@ -97,12 +97,13 @@ export default {
               this.$modal.show('mensaje-login');            
           }).then(response => {
             if(response.data.succeed=='true') {
+              console.log(response.data);
               store.commit('setState',   {
                 senderIn:this.usr,
                 usuarioIn:response.data.name,
-                urlRestIn:"192.168.100.14",
-                portRestIn:"6160",
-                urlWsIn:"192.168.100.14",
+                urlRestIn:response.data.ip,
+                portRestIn:response.data.port,
+                urlWsIn:response.data.ip,
                 portWsIn:"6159" 
                 //port:response.data.port, 
               });
